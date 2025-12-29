@@ -6,315 +6,651 @@
     <title>Crack the Code</title>
     <script src="/socket.io/socket.io.js"></script>
     <style>
-        :root { --primary: #007bff; --success: #28a745; --danger: #dc3545; --dark: #343a40; --light: #f8f9fa; }
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f2f5; margin: 0; display: flex; justify-content: center; min-height: 100vh; }
-        .container { background: white; margin: 20px 0; padding: 25px; width: 95%; max-width: 850px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); height: fit-content; }
+        /* --- THEME VARIABLES --- */
+        :root {
+            /* Light Theme */
+            --primary: #4f46e5;
+            --primary-fg: #ffffff;
+            --secondary: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --background: #f1f5f9;
+            --surface: #ffffff;
+            --text: #1e293b;
+            --border: #e2e8f0;
+            --input-bg: #ffffff;
+            --radius: 12px;
+            --shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        /* Dark Theme */
+        [data-theme="dark"] {
+            --primary: #6366f1;
+            --primary-fg: #ffffff;
+            --secondary: #94a3b8;
+            --success: #34d399;
+            --danger: #f87171;
+            --background: #0f172a;
+            --surface: #1e293b;
+            --text: #f8fafc;
+            --border: #334155;
+            --input-bg: #0f172a;
+            --shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--background); color: var(--text); margin: 0; min-height: 100vh; display: flex; flex-direction: column; transition: background 0.3s, color 0.3s; }
+        .container { width: 100%; max-width: 900px; margin: 0 auto; padding: 20px; box-sizing: border-box; flex: 1; display: flex; flex-direction: column; position: relative; }
+        
         .hidden { display: none !important; }
+        .card { background: var(--surface); padding: 25px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 20px; border: 1px solid var(--border); transition: background 0.3s; }
+        h2, h3, h4 { margin: 0 0 15px 0; text-align: center; color: var(--text); }
         
-        h2 { text-align: center; color: var(--dark); margin-bottom: 25px; }
-        input, button { padding: 14px; font-size: 16px; border-radius: 8px; width: 100%; margin-bottom: 12px; box-sizing: border-box; border: 2px solid #ddd; outline: none; }
-        button { background: var(--primary); color: white; font-weight: bold; border: none; cursor: pointer; transition: 0.2s; }
-        button:active { transform: scale(0.98); }
-        button.secondary { background: #6c757d; }
-        button.rejoin { background: var(--success); }
-        button.invite { width: auto; padding: 8px 15px; font-size: 0.8rem; background: #6f42c1; margin: 0; }
-        
-        /* Game UI */
-        .info-bar { display: flex; justify-content: space-between; align-items: center; background: var(--dark); color: white; padding: 12px 15px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; }
-        .turn-banner { padding: 12px; color: white; font-weight: bold; text-align: center; border-radius: 8px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
-        .my-turn { background: var(--success); }
-        .their-turn { background: var(--danger); }
+        /* FROZEN HEADER */
+        .header-row { 
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; 
+            position: sticky; top: 0; z-index: 100; background: var(--background); 
+            margin-top: -20px; padding-top: 20px; padding-bottom: 15px;
+            margin-left: -20px; padding-left: 20px;
+            margin-right: -20px; padding-right: 20px;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.3s, border-color 0.3s;
+        }
+        .theme-select { padding: 5px 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 0.8rem; cursor: pointer; outline: none; }
 
-        .game-board { display: flex; gap: 20px; margin-top: 10px; }
-        .panel { flex: 1; border: 1px solid #eee; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
-        .panel-head { background: var(--light); padding: 12px; font-weight: bold; text-align: center; border-bottom: 1px solid #eee; }
+        /* Inputs & Buttons */
+        input { width: 100%; padding: 15px; margin-bottom: 15px; background: var(--input-bg); color: var(--text); border: 2px solid var(--border); border-radius: var(--radius); font-size: 16px; outline: none; box-sizing: border-box; transition: 0.2s; }
+        input:focus { border-color: var(--primary); }
+        input:disabled { opacity: 0.6; cursor: not-allowed; }
         
+        button { width: 100%; padding: 15px; background: var(--primary); color: var(--primary-fg); border: none; border-radius: var(--radius); font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.2s; margin-bottom: 10px; }
+        button:hover { opacity: 0.9; }
+        button:disabled { background: var(--secondary); opacity: 0.5; cursor: not-allowed; }
+        button.secondary { background: var(--secondary); color: white; }
+        button.success { background: var(--success); color: white; }
+        button.danger { background: var(--danger); color: white; }
+        button.sm { width: auto; padding: 8px 16px; font-size: 14px; margin: 0; }
+
+        /* Lobby */
+        .lobby-code { font-size: 3rem; font-weight: 800; color: var(--primary); letter-spacing: 5px; text-align: center; margin: 20px 0; }
+        .player-list li { background: var(--background); padding: 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; font-weight: 500; border: 1px solid var(--border); }
+
+        /* Setup */
+        .setup-controls { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+        .op-status-badge { background: var(--background); color: var(--secondary); padding: 8px 15px; border-radius: 20px; font-size: 0.85rem; display: inline-block; margin-bottom: 15px; font-weight: 600; border: 1px solid var(--border); }
+        .op-ready { background: rgba(16, 185, 129, 0.2); color: var(--success); border-color: var(--success); }
+
+        /* Game Layout */
+        .game-wrapper { display: flex; flex-direction: column; gap: 20px; height: 100%; }
+
+        @media (min-width: 900px) {
+            .game-wrapper { flex-direction: row; align-items: flex-start; }
+            .game-left { flex: 2; } 
+            .game-right { 
+                flex: 1; 
+                position: sticky; 
+                top: 80px; 
+                align-self: flex-start;
+                max-height: 90vh;
+                display: flex;
+                flex-direction: column;
+            } 
+            .chat-area { display: flex; flex-direction: column; height: auto; }
+            /* Chat Box Desktop: Grow but Cap at 60vh */
+            .chat-box { flex: none; min-height: 150px; max-height: 60vh; overflow-y: auto; }
+        }
+
+        /* Turn Banner */
+        .turn-indicator { padding: 15px; border-radius: var(--radius); text-align: center; font-weight: bold; font-size: 1.1rem; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
+        .turn-my { background: var(--success); color: white; }
+        .turn-op { background: var(--surface); color: var(--secondary); border: 2px solid var(--border); }
+
+        /* Tables */
+        .boards-container { display: flex; gap: 15px; }
+        .board { flex: 1; background: var(--surface); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); border: 1px solid var(--border); }
+        .board-header { background: var(--background); padding: 12px; text-align: center; font-weight: 700; color: var(--secondary); text-transform: uppercase; border-bottom: 1px solid var(--border); }
+        
+        .table-scroll { max-height: 300px; overflow-y: auto; }
         table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 10px; text-align: center; border-bottom: 1px solid var(--light); font-size: 0.9rem; }
-        th { font-size: 0.75rem; color: #888; text-transform: uppercase; }
+        th { position: sticky; top: 0; background: var(--surface); font-size: 0.75rem; text-transform: uppercase; color: var(--secondary); padding: 8px; border-bottom: 2px solid var(--border); }
+        td { padding: 10px; text-align: center; border-bottom: 1px solid var(--border); font-weight: 600; color: var(--text); }
 
-        .help-btn { display: inline-block; width: 18px; height: 18px; background: #ccc; color: white; border-radius: 50%; line-height: 18px; font-size: 12px; cursor: pointer; margin-left: 4px; }
+        /* --- JS POWERED TOOLTIP CSS --- */
+        .help-icon { 
+            display: inline-block; width: 16px; height: 16px; 
+            background: var(--secondary); color: white; 
+            border-radius: 50%; text-align: center; 
+            line-height: 16px; font-size: 11px; font-weight: bold; 
+            margin-left: 5px; cursor: help; 
+        }
+
+        #floatingTooltip {
+            position: fixed; /* Fixes clipping issue */
+            z-index: 9999;
+            background: #1e293b;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            max-width: 180px;
+            text-align: center;
+            pointer-events: none; /* Let clicks pass through */
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
 
         /* Chat */
-        .chat-container { margin-top: 25px; border-top: 1px solid #eee; padding-top: 10px; }
-        .chat-window { height: 140px; overflow-y: auto; border: 1px solid #fafafa; background: #fafafa; border-radius: 8px; padding: 10px; margin-bottom: 5px; }
-        .chat-msg { margin: 4px 0; font-size: 0.9rem; }
-        .my-msg { color: var(--primary); text-align: right; }
-        #typingIndicator { font-size: 0.75rem; color: #888; height: 1rem; margin-left: 5px; margin-bottom: 5px; font-style: italic; }
-
-        @media (max-width: 650px) {
-            .game-board { flex-direction: column; }
-            .info-bar { flex-direction: column; gap: 10px; text-align: center; }
+        .chat-area { margin-top: auto; display: flex; flex-direction: column; }
+        .chat-box { 
+            min-height: 200px; 
+            max-height: 300px; /* Mobile Cap */
+            overflow-y: auto; 
+            background: var(--surface); 
+            border-radius: var(--radius); 
+            padding: 10px; 
+            margin-bottom: 10px; 
+            border: 1px solid var(--border); 
+            display: flex; 
+            flex-direction: column; 
+            gap: 6px; 
         }
+        .msg { padding: 6px 10px; border-radius: 8px; font-size: 0.9rem; max-width: 80%; width: fit-content; word-wrap: break-word; }
+        .msg.me { align-self: flex-end; background: var(--primary); color: var(--primary-fg); border-bottom-right-radius: 2px; }
+        .msg.them { align-self: flex-start; background: var(--background); color: var(--text); border: 1px solid var(--border); border-bottom-left-radius: 2px; }
+        
+        .input-group { display: flex; gap: 10px; }
+        .input-group input { margin: 0; }
+        .input-group button { margin: 0; width: auto; }
+
+        @media (max-width: 600px) { .boards-container { flex-direction: column; } }
     </style>
 </head>
 <body>
+
+    <div id="floatingTooltip"></div>
+
     <div class="container">
-        <h2>🔒 Crack the Code</h2>
+        <div class="header-row">
+            <h2 style="margin:0">🔐 Crack the Code</h2>
+            <select id="themeSelector" class="theme-select" onchange="applyTheme(this.value)">
+                <option value="system">🌗 System</option>
+                <option value="light">☀️ Light</option>
+                <option value="dark">🌑 Dark</option>
+            </select>
+        </div>
 
         <div id="view-menu">
-            <button onclick="switchView('create')">➕ Create Room</button>
-            <button class="secondary" onclick="switchView('join')">➡ Join Room</button>
-            <button id="rejoinBtn" class="rejoin hidden" onclick="doRejoin()">🔄 Rejoin Room</button>
+            <div style="margin-top: 20px;">
+                <button id="rejoinBtn" class="success hidden" onclick="doRejoin()">🔄 Rejoin Last Game</button>
+                <div class="card">
+                    <button onclick="switchView('create')">Create Room</button>
+                    <button class="secondary" onclick="switchView('join')">Join Room</button>
+                </div>
+            </div>
         </div>
 
         <div id="view-create" class="hidden">
-            <input id="createName" placeholder="Your Name">
-            <button onclick="doCreate()">Generate Room ID</button>
-            <button class="secondary" onclick="switchView('menu')">Back</button>
+            <div class="card">
+                <h3>Create Game</h3>
+                <input id="createName" placeholder="Enter Your Name">
+                <button onclick="doCreate()">Generate Room</button>
+                <button class="secondary" onclick="switchView('menu')">Back</button>
+            </div>
         </div>
 
         <div id="view-join" class="hidden">
-            <input id="joinName" placeholder="Your Name">
-            <input id="joinRoomId" type="number" placeholder="4-Digit Room ID">
-            <button onclick="doJoin()">Join Room</button>
-            <button class="secondary" onclick="switchView('menu')">Back</button>
+            <div class="card">
+                <h3>Join Game</h3>
+                <input id="joinName" placeholder="Enter Your Name">
+                <input id="joinRoomId" type="tel" placeholder="4-Digit Room Code">
+                <button onclick="doJoin()">Join Room</button>
+                <button class="secondary" onclick="switchView('menu')">Back</button>
+            </div>
         </div>
 
         <div id="view-lobby" class="hidden">
-            <div style="text-align: center;">
-                <p style="margin:0; color:#888">Room ID</p>
-                <div id="lobbyRoomId" style="font-size: 3rem; font-weight: bold; color: var(--primary); letter-spacing: 4px;">----</div>
-                <button class="invite" onclick="copyInvite()">🔗 Copy Invite</button>
-                <ul id="lobbyList" style="list-style:none; padding:20px 0; margin:0"></ul>
+            <div class="card" style="text-align: center;">
+                <h3>Lobby</h3>
+                <div id="lobbyRoomId" class="lobby-code">----</div>
+                <button class="sm secondary" onclick="copyInvite()">📋 Copy Invite</button>
+                <div style="margin-top:20px; text-align: left;">
+                    <p style="font-size:0.9rem; font-weight:bold; color:var(--secondary)">Players:</p>
+                    <ul id="lobbyList" class="player-list" style="list-style:none; padding:0"></ul>
+                </div>
+                <button id="hostStartBtn" onclick="hostStartGame()" class="hidden success" style="margin-top:20px" disabled>Start Setup</button>
+                <p id="waitingMsg" class="hidden" style="color:var(--secondary); margin-top:20px">Waiting for host to start...</p>
             </div>
         </div>
 
         <div id="view-setup" class="hidden">
-            <h3 id="welcome" style="text-align:center"></h3>
-            <input id="secretInput" type="tel" maxlength="4" placeholder="Enter 4 unique digits" style="text-align:center; letter-spacing:4px; font-size: 1.5rem;">
-            <button onclick="setSecret()">Lock Secret 🔒</button>
-            <p id="setupMsg" style="text-align:center; color:#888"></p>
+            <div class="card" style="text-align: center;">
+                <h3 id="welcomeMsg">Set Your Secret</h3>
+                <div id="opSetupStatus" class="op-status-badge">Opponent is choosing...</div>
+                
+                <p style="color:var(--secondary); font-size:0.9rem;">Enter 4 unique digits.</p>
+                <input id="secretInput" type="tel" maxlength="4" placeholder="1234" style="text-align:center; font-size: 2rem; letter-spacing: 5px; font-weight:bold;">
+                
+                <div class="setup-controls">
+                    <button id="lockBtn" onclick="toggleSecretLock()" class="secondary" style="width: auto;">🔒 Lock Secret</button>
+                    <button id="readyBtn" onclick="sendReady()" class="success hidden" style="width: auto;">✅ I'm Ready</button>
+                </div>
+                
+                <p id="setupStatus" style="color:var(--primary); font-weight:500; min-height: 20px; margin-top:15px"></p>
+            </div>
         </div>
 
         <div id="view-game" class="hidden">
-            <div class="info-bar">
-                <span>Room: <b id="gameRoomDisplay"></b> <button class="invite" style="font-size: 10px; padding:2px 5px" onclick="copyInvite()">Copy</button></span>
-                <span>Secret: <b id="gameSecretDisplay">****</b></span>
-            </div>
-            <div id="turnBanner" class="turn-banner"></div>
+            <div class="game-wrapper">
+                <div class="game-left">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <span>Room: <b id="gameRoomDisplay"></b></span>
+                        <div style="background:var(--background); padding:5px 10px; border-radius:8px; border:1px solid var(--border); font-size:0.9rem;">
+                            Secret: <b id="gameSecretDisplay">****</b>
+                        </div>
+                    </div>
 
-            <div style="display:flex; gap:10px">
-                <input id="guessInput" maxlength="4" type="tel" placeholder="Guess">
-                <button id="guessBtn" onclick="makeGuess()" style="width:100px; margin:0">Submit</button>
-            </div>
+                    <div id="turnBanner" class="turn-indicator"></div>
 
-            <div class="game-board">
-                <div class="panel">
-                    <div class="panel-head">My Guesses</div>
-                    <table>
-                        <thead><tr><th>Guess</th><th>Bulls<span class="help-btn" onclick="toggleHelp('bulls')">?</span></th><th>Cows<span class="help-btn" onclick="toggleHelp('cows')">?</span></th></tr></thead>
-                        <tbody id="myTable"></tbody>
-                    </table>
+                    <div class="card" style="padding: 15px;">
+                        <div class="input-group">
+                            <input id="guessInput" type="tel" maxlength="4" placeholder="Enter Guess">
+                            <button id="guessBtn" onclick="makeGuess()" style="width:100px;">Submit</button>
+                        </div>
+                    </div>
+
+                    <div class="boards-container">
+                        <div class="board">
+                            <div class="board-header">My Guesses</div>
+                            <div class="table-scroll">
+                                <table>
+                                    <thead><tr>
+                                        <th>Guess</th>
+                                        <th>Bulls 
+                                            <span class="help-icon" 
+                                                  onmouseenter="showTip(event, 'bulls')" 
+                                                  onmouseleave="hideTip()"
+                                                  onclick="showTipImmediate(event, 'bulls')">?</span>
+                                        </th>
+                                        <th>Cows
+                                            <span class="help-icon" 
+                                                  onmouseenter="showTip(event, 'cows')" 
+                                                  onmouseleave="hideTip()"
+                                                  onclick="showTipImmediate(event, 'cows')">?</span>
+                                        </th>
+                                    </tr></thead>
+                                    <tbody id="myHistory"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="board">
+                            <div class="board-header" id="opNameDisplay">Opponent</div>
+                            <div class="table-scroll">
+                                <table>
+                                    <thead><tr>
+                                        <th>Guess</th>
+                                        <th>Bulls 
+                                            <span class="help-icon" 
+                                                  onmouseenter="showTip(event, 'bulls')" 
+                                                  onmouseleave="hideTip()"
+                                                  onclick="showTipImmediate(event, 'bulls')">?</span>
+                                        </th>
+                                        <th>Cows
+                                            <span class="help-icon" 
+                                                  onmouseenter="showTip(event, 'cows')" 
+                                                  onmouseleave="hideTip()"
+                                                  onclick="showTipImmediate(event, 'cows')">?</span>
+                                        </th>
+                                    </tr></thead>
+                                    <tbody id="opHistory"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="panel">
-                    <div class="panel-head" id="opNameDisplay">Opponent</div>
-                    <table>
-                        <thead><tr><th>Guess</th><th>Bulls<span class="help-btn" onclick="toggleHelp('bulls')">?</span></th><th>Cows<span class="help-btn" onclick="toggleHelp('cows')">?</span></th></tr></thead>
-                        <tbody id="opTable"></tbody>
-                    </table>
-                </div>
-            </div>
 
-            <div class="chat-container">
-                <div id="typingIndicator"></div>
-                <div class="chat-window" id="chatWindow"></div>
-                <div style="display:flex; gap:8px">
-                    <input id="chatInput" placeholder="Message..." style="margin:0">
-                    <button onclick="sendChat()" style="width:80px; margin:0">Send</button>
+                <div class="game-right">
+                    <div class="chat-area card" style="padding:15px; margin:0;">
+                        <h4 style="margin:0 0 10px 0; color:var(--secondary)">Chat</h4>
+                        <div id="typingIndicator" style="font-size: 0.8rem; color: var(--secondary); height: 20px; padding-left: 5px; font-style:italic;"></div>
+                        <div class="chat-box" id="chatWindow"></div>
+                        <div class="input-group">
+                            <input id="chatInput" placeholder="Message...">
+                            <button class="sm" onclick="sendChat()">Send</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <p id="errorDisplay" style="color:var(--danger); text-align:center; font-weight:500; margin-top:15px"></p>
     </div>
 
-    <div id="disconnectOverlay" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,0.95); display:flex; justify-content:center; align-items:center; z-index:4000;">
-        <div style="background:white; padding:40px; border-radius:20px; text-align:center; width:80%; max-width:400px; border: 4px solid var(--danger);">
-            <h1 style="color:var(--danger); margin:0">⚠️ ALERT</h1>
-            <p id="disconnectMsg" style="font-size: 1.2rem; margin: 20px 0; font-weight: bold;"></p>
-            <p>Room will close in <b id="countdownText" style="font-size: 2rem; display:block; margin-top:10px;">60</b></p>
-            <p style="color:#666; font-size:0.9rem">Please wait for them to reconnect.</p>
+    <p id="errorDisplay" style="text-align:center; color:var(--danger); font-weight:600; padding:10px;"></p>
+
+    <div id="disconnectOverlay" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,0.9); display:flex; justify-content:center; align-items:center; z-index:200;">
+        <div class="card" style="text-align:center; max-width:350px; border:2px solid var(--danger)">
+            <h2 style="color:var(--danger)">⚠️ Player Disconnected</h2>
+            <p id="disconnectMsg" style="font-weight:bold;"></p>
+            <p style="color:var(--secondary); font-size:0.9rem">Wait time remaining:</p>
+            <div style="font-size:3rem; font-weight:800; margin:10px 0" id="countdownText">60</div>
         </div>
     </div>
 
-    <div id="bullsHelpModal" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center; z-index:2000;" onclick="toggleHelp('bulls')">
-        <div style="background:white; padding:25px; border-radius:12px; max-width:300px; text-align:center">
-            <h3>🎯 Bulls</h3><p>Correct digit in the <b>correct</b> position.</p><button style="width:auto">Got it</button>
-        </div>
-    </div>
-    <div id="cowsHelpModal" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center; z-index:2000;" onclick="toggleHelp('cows')">
-        <div style="background:white; padding:25px; border-radius:12px; max-width:300px; text-align:center">
-            <h3>🐮 Cows</h3><p>Correct digit in the <b>wrong</b> position.</p><button style="width:auto">Got it</button>
-        </div>
-    </div>
-
-    <div id="winOverlay" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,0.9); display:flex; justify-content:center; align-items:center; z-index:3000;">
-        <div style="background:white; padding:40px; border-radius:20px; text-align:center; width:80%; max-width:350px;">
-            <h1 id="winTitle" style="margin:0"></h1>
-            <p id="winMsg" style="margin:20px 0; color:#666"></p>
-            <button onclick="requestRematch()" style="background: var(--success); margin-bottom: 10px;">🔄 New Game (Rematch)</button>
+    <div id="winOverlay" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,0.8); display:flex; justify-content:center; align-items:center; z-index:100;">
+        <div class="card" style="text-align:center; max-width:350px;">
+            <h1 id="winTitle" style="font-size: 3rem; margin-bottom: 10px;">🏆</h1>
+            <h2 id="winHeader">Victory!</h2>
+            <p id="winMsg" style="color:var(--secondary); margin-bottom:25px"></p>
+            <button onclick="requestRematch()">🔄 Play Again</button>
             <button onclick="exitRoom()" class="secondary">🚪 Exit Room</button>
         </div>
     </div>
 
     <script>
-        const socket = io({ reconnection: true, reconnectionAttempts: 10, timeout: 20000 });
-        let myName = "", myRoom = "", mySecret = "";
-        
-        const views = { menu: document.getElementById('view-menu'), create: document.getElementById('view-create'), join: document.getElementById('view-join'), lobby: document.getElementById('view-lobby'), setup: document.getElementById('view-setup'), game: document.getElementById('view-game') };
+        const socket = io({ reconnection: true });
+        let myName = "", myRoom = "", mySecret = "", isHost = false;
 
-        // --- INIT & UTILS ---
-        window.onload = () => {
-            const r = localStorage.getItem('lastRoom'), p = localStorage.getItem('lastPlayer');
-            if(r && p) { rejoinBtn.classList.remove('hidden'); rejoinBtn.innerText = `🔄 Rejoin Room ${r}`; }
+        // --- PERSISTENT TOKEN ---
+        let myToken = localStorage.getItem('playerToken');
+        if(!myToken) {
+            myToken = Math.random().toString(36).substring(2) + Date.now().toString(36);
+            localStorage.setItem('playerToken', myToken);
+        }
+
+        const inputs = {
+            createName: document.getElementById('createName'),
+            joinName: document.getElementById('joinName'),
+            joinRoomId: document.getElementById('joinRoomId'),
+            secret: document.getElementById('secretInput'),
+            guess: document.getElementById('guessInput'),
+            chat: document.getElementById('chatInput')
         };
 
-        function switchView(v) { Object.values(views).forEach(el => el.classList.add('hidden')); views[v].classList.remove('hidden'); errorDisplay.innerText = ""; }
-        function saveSession(r, n) { localStorage.setItem('lastRoom', r); localStorage.setItem('lastPlayer', n); }
-        function toggleHelp(t) { document.getElementById(t==='bulls'?'bullsHelpModal':'cowsHelpModal').classList.toggle('hidden'); }
-        function copyInvite() {
-            const text = `Join my Crack the Code game!\nRoom ID: ${myRoom}\nLink: ${window.location.origin}`;
-            navigator.clipboard.writeText(text).then(() => alert("Invite Copied!"));
+        // --- TOOLTIP LOGIC (JS DRIVEN) ---
+        let tooltipTimer;
+        const tooltipEl = document.getElementById('floatingTooltip');
+
+        function setTooltipContent(type) {
+            if(type === 'bulls') return "🎯 Bulls<br>Correct Digit, Correct Spot.";
+            if(type === 'cows') return "🐮 Cows<br>Correct Digit, Wrong Spot.";
         }
 
-        // --- ACTIONS ---
-        function doCreate() { myName = createName.value.trim(); if(myName) socket.emit('create_room', { name: myName }); }
-        function doJoin() { myName = joinName.value.trim(); myRoom = joinRoomId.value.trim(); if(myName && myRoom) socket.emit('join_room', { roomId: myRoom, name: myName }); }
-        function doRejoin() { myRoom = localStorage.getItem('lastRoom'); myName = localStorage.getItem('lastPlayer'); socket.emit('rejoin_room', { roomId: myRoom, name: myName }); }
-        
-        function setSecret() { 
-            mySecret = secretInput.value; 
-            // Changed input type to 'tel', so validation ensures 4 digits
-            if(/^\d{4}$/.test(mySecret) && new Set(mySecret).size === 4) {
-                socket.emit('set_secret', { roomId: myRoom, secret: mySecret }); 
-            } else {
-                alert("Please enter 4 UNIQUE digits.");
+        function positionTooltip(e) {
+            const rect = e.target.getBoundingClientRect();
+            tooltipEl.style.top = (rect.top - 50) + 'px'; // Position above
+            tooltipEl.style.left = (rect.left - 60) + 'px'; // Center roughly
+        }
+
+        function showTip(e, type) {
+            tooltipEl.innerHTML = setTooltipContent(type);
+            positionTooltip(e);
+            
+            // Wait 1 second before showing
+            tooltipTimer = setTimeout(() => {
+                tooltipEl.style.opacity = '1';
+            }, 1000);
+        }
+
+        function showTipImmediate(e, type) {
+            clearTimeout(tooltipTimer); // Clear any pending timer
+            tooltipEl.innerHTML = setTooltipContent(type);
+            positionTooltip(e);
+            tooltipEl.style.opacity = '1'; // Show instantly
+        }
+
+        function hideTip() {
+            clearTimeout(tooltipTimer);
+            tooltipEl.style.opacity = '0';
+        }
+
+
+        // --- THEME ---
+        function applyTheme(theme) {
+            localStorage.setItem('theme', theme);
+            const root = document.documentElement;
+            if (theme === 'dark') root.setAttribute('data-theme', 'dark');
+            else if (theme === 'light') root.removeAttribute('data-theme');
+            else {
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) root.setAttribute('data-theme', 'dark');
+                else root.removeAttribute('data-theme');
             }
         }
-        
-        function sendChat() { const m = chatInput.value.trim(); if(m) { socket.emit('send_chat', { roomId: myRoom, message: m, senderName: myName }); chatInput.value = ""; } }
-
-        function makeGuess() { 
-            const g = guessInput.value; 
-            if(!/^\d{4}$/.test(g)) return;
-            
-            // --- CHANGED: Alert on Duplicate Guess ---
-            const prev = Array.from(document.querySelectorAll('#myTable td:first-child')).map(td => td.innerText);
-            if(prev.includes(g)) { 
-                alert(`⚠️ You have already guessed ${g}! Try a different number.`);
-                return; 
-            }
-            
-            socket.emit('make_guess', { roomId: myRoom, guess: g }); 
-            guessInput.value = ""; 
-        }
-
-        function requestRematch() { winOverlay.classList.add('hidden'); socket.emit('play_again', { roomId: myRoom }); }
-        function exitRoom() { localStorage.removeItem('lastRoom'); localStorage.removeItem('lastPlayer'); socket.emit('leave_room', { roomId: myRoom }); }
-
-        // --- TYPING INDICATOR ---
-        let typingTimeout;
-        chatInput.addEventListener('input', () => {
-            socket.emit('typing', { roomId: myRoom, isTyping: true, name: myName });
-            clearTimeout(typingTimeout);
-            typingTimeout = setTimeout(() => socket.emit('typing', { roomId: myRoom, isTyping: false, name: myName }), 2000);
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            if (localStorage.getItem('theme') === 'system') applyTheme('system');
         });
 
-        // --- SOCKET EVENTS ---
-        socket.on('room_created', d => { myRoom = d.roomId; saveSession(myRoom, myName); switchView('lobby'); lobbyRoomId.innerText = d.roomId; });
-        socket.on('joined_success', d => { myRoom = d.roomId; saveSession(myRoom, myName); switchView('lobby'); lobbyRoomId.innerText = d.roomId; });
-        socket.on('lobby_update', d => { lobbyList.innerHTML = d.players.map(p => `<li style="padding:10px; background:#f8f9fa; margin:5px 0; border-radius:8px"><b>${p.name}</b> ${p.name===myName?'(You)':''}</li>`).join(''); });
+        // --- INIT ---
+        window.onload = () => {
+            const savedTheme = localStorage.getItem('theme') || 'system';
+            document.getElementById('themeSelector').value = savedTheme;
+            applyTheme(savedTheme);
+
+            const savedName = localStorage.getItem('playerName');
+            if(savedName) {
+                inputs.createName.value = savedName;
+                inputs.joinName.value = savedName;
+            }
+
+            if(localStorage.getItem('lastRoom')) {
+                const btn = document.getElementById('rejoinBtn');
+                btn.classList.remove('hidden');
+                btn.innerText = `🔄 Rejoin Room ${localStorage.getItem('lastRoom')}`;
+            }
+        };
+
+        const screens = ['menu', 'create', 'join', 'lobby', 'setup', 'game'];
+        function switchView(v) { 
+            screens.forEach(id => document.getElementById('view-'+id).classList.add('hidden'));
+            document.getElementById('view-'+v).classList.remove('hidden'); 
+            document.getElementById('errorDisplay').innerText = "";
+        }
+
+        // --- EVENTS ---
+        inputs.chat.addEventListener('keydown', (e) => { if(e.key === 'Enter') { sendChat(); inputs.chat.focus(); } });
+        inputs.guess.addEventListener('keydown', (e) => { if(e.key === 'Enter') { makeGuess(); inputs.guess.focus(); } });
         
-        socket.on('move_to_setup', () => { 
-            document.getElementById('myTable').innerHTML = ""; 
-            document.getElementById('opTable').innerHTML = "";
+        // Typing Logic
+        let typeTimer;
+        inputs.chat.addEventListener('input', () => {
+            socket.emit('typing', { roomId: myRoom, token: myToken, isTyping: true });
+            clearTimeout(typeTimer);
+            typeTimer = setTimeout(() => {
+                socket.emit('typing', { roomId: myRoom, token: myToken, isTyping: false });
+            }, 1000);
+        });
+
+        // --- CORE ACTIONS ---
+        function doCreate() { 
+            myName = inputs.createName.value.trim(); 
+            if(myName) { 
+                isHost = true; 
+                localStorage.setItem('playerName', myName);
+                socket.emit('create_room', { name: myName, token: myToken }); 
+            }
+        }
+        function doJoin() { 
+            myName = inputs.joinName.value.trim(); 
+            myRoom = inputs.joinRoomId.value.trim(); 
+            if(myName && myRoom) { 
+                isHost = false; 
+                localStorage.setItem('playerName', myName);
+                socket.emit('join_room', { roomId: myRoom, name: myName, token: myToken }); 
+            }
+        }
+        function doRejoin() { 
+            myRoom = localStorage.getItem('lastRoom'); 
+            socket.emit('rejoin_room', { roomId: myRoom, token: myToken }); 
+        }
+
+        // --- LOBBY/SETUP ---
+        function hostStartGame() { socket.emit('host_start_setup', { roomId: myRoom }); }
+        
+        let isLocked = false;
+        function toggleSecretLock() {
+            const val = inputs.secret.value;
+            if(!isLocked) {
+                if(!/^\d{4}$/.test(val) || new Set(val).size !== 4) return alert("Enter 4 UNIQUE digits.");
+                mySecret = val;
+                inputs.secret.disabled = true;
+                document.getElementById('lockBtn').classList.add('hidden');
+                document.getElementById('readyBtn').classList.remove('hidden');
+                document.getElementById('setupStatus').innerText = "Secret Locked.";
+                isLocked = true;
+            }
+        }
+
+        function sendReady() {
+            document.getElementById('readyBtn').disabled = true;
+            document.getElementById('setupStatus').innerText = "Waiting for game start...";
+            socket.emit('player_ready', { roomId: myRoom, token: myToken, secret: mySecret });
+        }
+
+        // --- GAMEPLAY ---
+        function makeGuess() {
+            const val = inputs.guess.value;
+            if(!/^\d{4}$/.test(val)) return;
+
+            // FIX: Prevent Duplicate Guesses
+            const previousGuesses = Array.from(document.querySelectorAll('#myHistory tr td:first-child')).map(td => td.innerText.trim());
+            if(previousGuesses.includes(val)) {
+                document.getElementById('errorDisplay').innerText = "Already guessed!";
+                setTimeout(()=>document.getElementById('errorDisplay').innerText = "", 2000);
+                return;
+            }
+
+            socket.emit('make_guess', { roomId: myRoom, token: myToken, guess: val });
+            inputs.guess.value = "";
+        }
+
+        function sendChat() { 
+            const m = inputs.chat.value.trim(); 
+            if(m) { 
+                socket.emit('send_chat', { roomId: myRoom, message: m, token: myToken }); 
+                inputs.chat.value = ""; 
+            } 
+        }
+
+        // --- SOCKET LISTENERS ---
+        socket.on('room_created', d => { 
+            myRoom = d.roomId; localStorage.setItem('lastRoom', myRoom); 
+            switchView('lobby'); document.getElementById('lobbyRoomId').innerText = myRoom; 
+            document.getElementById('hostStartBtn').classList.remove('hidden');
+        });
+        
+        socket.on('joined_success', d => { 
+            myRoom = d.roomId; localStorage.setItem('lastRoom', myRoom); 
+            switchView('lobby'); document.getElementById('lobbyRoomId').innerText = myRoom; 
+            document.getElementById('waitingMsg').classList.remove('hidden');
+        });
+
+        socket.on('lobby_update', d => {
+            const list = document.getElementById('lobbyList');
+            list.innerHTML = d.players.map(p => `<li>${p.name} ${p.isMe?'(You)':''}</li>`).join('');
+            if(isHost) document.getElementById('hostStartBtn').disabled = d.players.length < 2;
+        });
+
+        socket.on('enter_setup', () => { 
             switchView('setup'); 
-            welcome.innerText = `Hi, ${myName}`; 
+            isLocked = false; inputs.secret.value = ""; inputs.secret.disabled = false;
+            document.getElementById('lockBtn').classList.remove('hidden');
+            document.getElementById('readyBtn').classList.add('hidden');
+            document.getElementById('readyBtn').disabled = false;
+            document.getElementById('setupStatus').innerText = "";
+            document.getElementById('opSetupStatus').innerText = "Opponent is choosing...";
+            document.getElementById('opSetupStatus').className = "op-status-badge";
         });
 
-        socket.on('game_ready', d => { switchView('game'); gameRoomDisplay.innerText = myRoom; gameSecretDisplay.innerText = mySecret; opNameDisplay.innerText = d.opponent; updateTurn(d.turn); });
+        socket.on('op_ready_state', () => {
+            document.getElementById('opSetupStatus').innerText = "Opponent is Ready ✅";
+            document.getElementById('opSetupStatus').className = "op-status-badge op-ready";
+        });
+
+        socket.on('game_start', d => {
+            switchView('game');
+            document.getElementById('gameRoomDisplay').innerText = myRoom;
+            document.getElementById('gameSecretDisplay').innerText = mySecret;
+            document.getElementById('opNameDisplay').innerText = d.opponent;
+            document.getElementById('myHistory').innerHTML = "";
+            document.getElementById('opHistory').innerHTML = "";
+            updateTurn(d.turnToken);
+        });
 
         socket.on('guess_result', d => {
-            const isMe = d.playerName === myName;
-            const row = `<tr><td><b>${d.guess}</b></td><td style="color:var(--success)">${d.bulls}</td><td style="color:#fd7e14">${d.cows}</td></tr>`;
-            document.getElementById(isMe ? 'myTable' : 'opTable').innerHTML = row + document.getElementById(isMe ? 'myTable' : 'opTable').innerHTML;
-            if(d.winner) { 
-                winOverlay.classList.remove('hidden'); 
-                winTitle.innerText = isMe ? "VICTORY 🏆" : "DEFEAT 💀"; 
-                winMsg.innerText = isMe ? "You cracked the code!" : `${d.playerName} cracked your code.`; 
-            } else updateTurn(d.nextTurn);
+            const isMe = d.playerToken === myToken; 
+            addGuessRow(isMe?'myHistory':'opHistory', d.guess, d.bulls, d.cows);
+            if(d.winner) {
+                document.getElementById('winOverlay').classList.remove('hidden');
+                document.getElementById('winTitle').innerText = isMe ? "🏆" : "💀";
+                document.getElementById('winHeader').innerText = isMe ? "VICTORY!" : "DEFEAT";
+                document.getElementById('winMsg').innerText = isMe ? "Code Cracked!" : `${d.playerName} cracked it: ${mySecret}`;
+            } else updateTurn(d.turnToken);
         });
 
         socket.on('receive_chat', d => {
-            const isMe = d.senderName === myName;
-            chatWindow.innerHTML += `<div class="chat-msg ${isMe?'my-msg':''}"><b>${isMe?'You':d.senderName}:</b> ${d.message}</div>`;
-            chatWindow.scrollTo(0, chatWindow.scrollHeight);
+            const isMe = d.playerToken === myToken;
+            const chatWin = document.getElementById('chatWindow');
+            chatWin.insertAdjacentHTML('beforeend', `<div class="msg ${isMe?'me':'them'}"></b>${d.message}</div>`);
+            chatWin.scrollTop = chatWin.scrollHeight;
         });
 
-        socket.on('display_typing', d => { typingIndicator.innerText = d.isTyping ? `${d.name} is typing...` : ""; });
+        socket.on('display_typing', d => {
+             document.getElementById('typingIndicator').innerText = d.isTyping ? `${d.name} is typing...` : "";
+        });
 
-        // --- REJOIN & SYNC ---
         socket.on('rejoined_game', d => {
             myRoom = d.roomId; myName = d.name; mySecret = d.secret;
-            if(!d.started) return switchView('setup');
-            
-            switchView('game');
-            gameRoomDisplay.innerText = myRoom; gameSecretDisplay.innerText = mySecret; opNameDisplay.innerText = d.opponentName;
-            
-            // Restore Chat
-            chatWindow.innerHTML = d.chatHistory.map(m => `<div class="chat-msg ${m.senderName===myName?'my-msg':''}"><b>${m.senderName===myName?'You':m.senderName}:</b> ${m.message}</div>`).join('');
-            
-            // Restore Tables
-            document.getElementById('myTable').innerHTML = ""; document.getElementById('opTable').innerHTML = "";
-            d.guesses.forEach(g => {
-                const isMe = g.playerName === myName;
-                const row = `<tr><td><b>${g.guess}</b></td><td style="color:var(--success)">${g.bulls}</td><td style="color:#fd7e14">${g.cows}</td></tr>`;
-                document.getElementById(isMe ? 'myTable' : 'opTable').innerHTML = row + document.getElementById(isMe ? 'myTable' : 'opTable').innerHTML;
-            });
-            updateTurn(d.turn);
-            
-            // CHANGED: Hide disconnect overlay if rejoining
-            disconnectOverlay.classList.add('hidden');
+            if(d.state === 'lobby') {
+                switchView('lobby'); document.getElementById('lobbyRoomId').innerText = myRoom;
+            } else if (d.state === 'setup') {
+                switchView('setup');
+            } else {
+                switchView('game');
+                document.getElementById('gameRoomDisplay').innerText = myRoom;
+                document.getElementById('gameSecretDisplay').innerText = mySecret || "****";
+                document.getElementById('opNameDisplay').innerText = d.opponentName;
+                document.getElementById('myHistory').innerHTML = "";
+                document.getElementById('opHistory').innerHTML = "";
+                
+                d.guesses.forEach(g => {
+                    const isMe = g.playerToken === myToken;
+                    addGuessRow(isMe?'myHistory':'opHistory', g.guess, g.bulls, g.cows);
+                });
+                
+                // Restore Chat
+                const chatWin = document.getElementById('chatWindow');
+                chatWin.innerHTML = "";
+                d.chatHistory.forEach(m => {
+                    const isMe = m.playerToken === myToken;
+                    chatWin.insertAdjacentHTML('beforeend', `<div class="msg ${isMe?'me':'them'}"><b>${m.senderName}</b>${m.message}</div>`);
+                });
+                chatWin.scrollTop = chatWin.scrollHeight;
+
+                updateTurn(d.turnToken);
+                document.getElementById('disconnectOverlay').classList.add('hidden');
+            }
         });
 
-        socket.on('reset_for_rematch', () => {
-            document.getElementById('myTable').innerHTML = "";
-            document.getElementById('opTable').innerHTML = "";
-            guessInput.value = "";
-            switchView('setup');
-            setupMsg.innerText = "New game! Set your new secret code.";
-            winOverlay.classList.add('hidden');
-        });
-
-        socket.on('room_exited', () => { location.reload(); });
-        
-        // --- CHANGED: Alert Overlay Logic ---
-        socket.on('opponent_disconnected', d => { 
-            disconnectOverlay.classList.remove('hidden'); 
-            disconnectMsg.innerText = `${d.name} has disconnected.`; 
-            countdownText.innerText = d.timeLeft; 
-        });
-        
-        socket.on('timer_tick', d => { countdownText.innerText = d.timeLeft; });
-        
-        socket.on('reconnect_success', m => { 
-            // Automatically remove the alert overlay
-            disconnectOverlay.classList.add('hidden'); 
-            errorDisplay.innerText = m; 
-            setTimeout(()=>errorDisplay.innerText="", 3000); 
-        });
-        
-        socket.on('error_msg', m => showError(m));
-
-        function updateTurn(id) {
-            const isMy = id === socket.id;
-            turnBanner.innerText = isMy ? "🟢 Your Turn" : "🔴 Opponent's Turn";
-            turnBanner.className = `turn-banner ${isMy?'my-turn':'their-turn'}`;
-            guessBtn.disabled = !isMy; guessInput.disabled = !isMy;
+        function updateTurn(token) {
+            const isMe = token === myToken;
+            const ban = document.getElementById('turnBanner');
+            ban.innerText = isMe ? "Your Turn" : "Opponent's Turn";
+            ban.className = "turn-indicator " + (isMe?"turn-my":"turn-op");
+            document.getElementById('guessBtn').disabled = !isMe;
+            inputs.guess.disabled = !isMe;
+            if(isMe) inputs.guess.focus();
         }
 
-        function showError(msg) { errorDisplay.innerText = msg; setTimeout(() => errorDisplay.innerText="", 3000); }
+        function addGuessRow(target, g, b, c) {
+            document.getElementById(target).insertAdjacentHTML('afterbegin', `<tr><td>${g}</td><td style="color:var(--success)">${b}</td><td style="color:#f59e0b">${c}</td></tr>`);
+        }
+
+        function requestRematch() { document.getElementById('winOverlay').classList.add('hidden'); socket.emit('play_again', { roomId: myRoom }); }
+        function exitRoom() { localStorage.clear(); socket.emit('leave_room', { roomId: myRoom, token: myToken }); location.reload(); }
+
+        // System
+        socket.on('error_msg', m => { document.getElementById('errorDisplay').innerText = m; setTimeout(()=>document.getElementById('errorDisplay').innerText="",3000); });
+        socket.on('opponent_disconnected', d => { document.getElementById('disconnectOverlay').classList.remove('hidden'); document.getElementById('disconnectMsg').innerText = `${d.name} disconnected.`; });
+        socket.on('timer_tick', d => { document.getElementById('countdownText').innerText = d.timeLeft; });
+        socket.on('reconnect_success', () => { document.getElementById('disconnectOverlay').classList.add('hidden'); });
+
     </script>
 </body>
 </html>
