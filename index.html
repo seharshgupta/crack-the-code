@@ -28,48 +28,56 @@
         .hidden { display: none !important; }
         .card { background: var(--surface); padding: 30px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 25px; border: 1px solid var(--border); transition: background 0.3s; }
         
-        /* HEADER - FIXED ALIGNMENT */
+        /* HEADER - FIXED OPTICAL ALIGNMENT */
         .header-row { 
             display: flex; 
             justify-content: space-between; 
-            align-items: center; /* Vertical Center */
+            align-items: center; 
             margin-bottom: 25px; 
-            position: sticky; top: 0; z-index: 100; 
+            position: sticky; top: 0; z-index: 1000; 
             background: var(--background); 
-            margin-top: -20px; padding-top: 20px; padding-bottom: 5px; 
-            margin-left: -20px; padding-left: 20px; margin-right: -20px; padding-right: 20px;
+            margin-top: -20px; 
+            padding: 10px 20px; 
+            margin-left: -20px; margin-right: -20px; 
             border-bottom: 1px solid var(--border); 
             transition: background 0.3s;
+            height: 50px; /* Consistent height context */
         }
         
         h2 { 
-            margin: 0; /* Reset margins to prevent push */
-            text-align: center; color: var(--text); font-weight: 800; letter-spacing: -0.5px; 
-            font-size: 1.8rem; 
-            line-height: 1; /* Tighter line height for better alignment */
-            display: flex; align-items: center; /* Ensure icon and text align */
+            margin: 0; 
+            color: var(--text); 
+            font-weight: 800; /* Bold */
+            letter-spacing: -0.5px; 
+            font-size: 1.8rem; /* Large */
+            line-height: 1;
+            /* Flex center ensures the text sits vertically mid-container */
+            display: flex; 
+            align-items: center; 
         }
 
         .header-controls { 
             display: flex; 
-            gap: 10px; 
-            align-items: center; /* Vertical Center Buttons */
+            gap: 12px; 
+            align-items: center; 
             height: 100%;
         }
         
-        /* THEME & MENU BUTTONS - FIXED SIZE SQUARES */
+        /* BUTTONS */
         .icon-btn { 
             background: transparent; border: none; color: var(--text); 
-            font-size: 1.4rem; cursor: pointer; 
+            font-size: 1.5rem; cursor: pointer; 
             border-radius: 12px; transition: transform 0.2s, background 0.2s;
-            /* Flex centering for icon inside button */
+            /* Perfect centering for icons */
             display: flex; align-items: center; justify-content: center;
-            width: 44px; height: 44px; padding: 0; 
+            width: 44px; height: 44px; 
+            padding: 0; margin: 0;
+            line-height: 0; /* Prevents font line-height from offsetting icon */
         }
-        .icon-btn:hover { background: var(--surface); transform: scale(1.05); box-shadow: var(--shadow); }
+        .icon-btn:hover { background: var(--surface); transform: scale(1.1); box-shadow: var(--shadow); }
         
-        .menu-dropdown { position: absolute; top: 65px; right: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); display: none; flex-direction: column; width: 180px; z-index: 200; overflow: hidden; }
-        .menu-dropdown button { background: transparent; color: var(--text); text-align: left; padding: 15px; margin: 0; border-radius: 0; border-bottom: 1px solid var(--border); font-size: 1rem; font-weight: 500; width: 100%; display: block; }
+        .menu-dropdown { position: fixed; top: 70px; right: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); display: none; flex-direction: column; width: 180px; z-index: 1001; overflow: hidden; }
+        .menu-dropdown button { background: transparent; color: var(--text); text-align: left; padding: 15px; margin: 0; border-radius: 0; border-bottom: 1px solid var(--border); font-size: 1rem; font-weight: 500; }
         .menu-dropdown button:last-child { border-bottom: none; }
         .menu-dropdown button:hover { background: var(--background); }
 
@@ -109,6 +117,14 @@
             .chat-box { flex: none; min-height: 200px; max-height: 60vh; overflow-y: auto; }
         }
 
+        /* MOBILE HEADER */
+        @media (max-width: 600px) {
+            .header-row { padding: 5px 20px; }
+            h2 { font-size: 1.5rem; }
+            .icon-btn { width: 40px; height: 40px; font-size: 1.3rem; }
+            .boards-container { flex-direction: column; }
+        }
+
         .turn-indicator { padding: 18px; border-radius: 12px; text-align: center; font-weight: 800; font-size: 1.2rem; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .turn-my { background: var(--success); color: white; }
         .turn-op { background: var(--surface); color: var(--secondary); border: 2px solid var(--border); }
@@ -125,16 +141,51 @@
         th { position: sticky; top: 0; background: var(--surface); padding: 12px; border-bottom: 2px solid var(--border); color: var(--secondary); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
         td { padding: 14px; text-align: center; border-bottom: 1px solid var(--border); font-weight: 700; color: var(--text); font-size: 1.1rem; }
 
-        /* TOOLTIPS & CHAT */
+        /* TOOLTIPS */
         .tooltip-container { position: relative; display: inline-block; margin-left: 5px; cursor: help; }
         .help-icon { display: inline-block; width: 20px; height: 20px; background: var(--secondary); color: white; border-radius: 50%; text-align: center; line-height: 20px; font-size: 12px; font-weight: bold; }
         #floatingTooltip { position: fixed; z-index: 9999; background: #1e293b; color: white; padding: 12px; border-radius: 8px; font-size: 0.9rem; max-width: 200px; text-align: center; pointer-events: none; opacity: 0; transition: opacity 0.2s ease-in-out; box-shadow: 0 5px 20px rgba(0,0,0,0.4); }
 
+        /* CHAT & TYPING */
         .chat-area { margin-top: auto; display: flex; flex-direction: column; }
         .chat-box { min-height: 250px; max-height: 400px; overflow-y: auto; background: var(--surface); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
         .msg { padding: 10px 15px; border-radius: 12px; font-size: 1rem; max-width: 80%; width: fit-content; word-wrap: break-word; line-height: 1.5; }
         .msg.me { align-self: flex-end; background: var(--primary); color: var(--primary-fg); border-bottom-right-radius: 2px; }
         .msg.them { align-self: flex-start; background: var(--background); color: var(--text); border: 1px solid var(--border); border-bottom-left-radius: 2px; }
+        
+        .msg.typing { align-self: flex-start; background: var(--background); border: 1px solid var(--border); border-bottom-left-radius: 2px; padding: 10px 15px; display: flex; align-items: center; gap: 4px; width: auto; height: 20px; }
+        .dot { width: 6px; height: 6px; background: var(--secondary); border-radius: 50%; animation: typeBounce 1.4s infinite ease-in-out both; }
+        .dot:nth-child(1) { animation-delay: -0.32s; }
+        .dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typeBounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+
+        /* TOAST NOTIFICATION */
+        #toast {
+            visibility: hidden; 
+            min-width: 250px; 
+            max-width: 85%; /* Responsive width */
+            background-color: rgba(30, 41, 59, 0.95); 
+            color: #fff; 
+            text-align: center; 
+            border-radius: 50px; 
+            padding: 14px 28px; 
+            position: fixed; 
+            z-index: 2000; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            bottom: -80px; 
+            font-size: 1rem; 
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+            backdrop-filter: blur(8px);
+            transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s;
+            opacity: 0;
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis;
+        }
+        #toast.show { visibility: visible; opacity: 1; bottom: 30px; }
+
         .input-group { display: flex; gap: 10px; } .input-group input { margin: 0; } .input-group button { margin: 0; width: auto; }
 
         /* LEADERBOARD TABLE */
@@ -143,17 +194,16 @@
         .lb-table td { padding: 12px; border-bottom: 1px solid var(--border); }
 
         /* OVERLAYS */
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 500; backdrop-filter: blur(4px); }
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 1500; backdrop-filter: blur(4px); }
         .overlay-card { background: var(--surface); padding: 40px; border-radius: 24px; width: 90%; max-width: 450px; text-align: center; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.3); border: 1px solid var(--border); }
         .close-btn { position: absolute; top: 15px; right: 20px; background: transparent; color: var(--text); font-size: 1.5rem; cursor: pointer; width: auto; padding: 0; margin: 0; opacity: 0.6; }
         .close-btn:hover { opacity: 1; }
-
-        @media (max-width: 600px) { .boards-container { flex-direction: column; } }
     </style>
 </head>
 <body>
 
     <div id="floatingTooltip"></div>
+    <div id="toast"></div>
 
     <div class="container">
         <div class="header-row">
@@ -341,6 +391,25 @@
             }
         }
 
+        // --- TOAST & CHAT VISIBILITY LOGIC ---
+        let isChatVisible = false;
+        const chatObserver = new IntersectionObserver((entries) => {
+            isChatVisible = entries[0].isIntersecting;
+        }, { threshold: 0.1 });
+        
+        setTimeout(() => {
+            const chatBox = document.getElementById('chatWindow');
+            if(chatBox) chatObserver.observe(chatBox);
+        }, 500);
+
+        function showToast(msg) {
+            if (isChatVisible) return;
+            const toast = document.getElementById("toast");
+            toast.innerText = msg;
+            toast.className = "show";
+            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+
         // --- INIT ---
         window.onload = () => {
             const savedName = localStorage.getItem('playerName');
@@ -470,7 +539,34 @@
         function makeGuess() { const v = inputs.guess.value; if(!/^\d{4}$/.test(v)) return; const prev = Array.from(document.querySelectorAll('#myHistory tr td:first-child')).map(t => t.innerText); if(prev.includes(v)) return alert("Duplicate!"); socket.emit('make_guess', { roomId: myRoom, token: myToken, guess: v }); inputs.guess.value = ""; }
         function sendChat() { const m = inputs.chat.value.trim(); if(m) { socket.emit('send_chat', { roomId: myRoom, message: m, token: myToken }); inputs.chat.value = ""; } }
         
-        socket.on('receive_chat', d => { const isMe = d.playerToken === myToken; document.getElementById('chatWindow').insertAdjacentHTML('beforeend', `<div class="msg ${isMe?'me':'them'}">${d.message}</div>`); document.getElementById('chatWindow').scrollTop = 9999; });
+        socket.on('receive_chat', d => { 
+            const isMe = d.playerToken === myToken; 
+            const chatWin = document.getElementById('chatWindow');
+            chatWin.insertAdjacentHTML('beforeend', `<div class="msg ${isMe?'me':'them'}">${d.message}</div>`); 
+            chatWin.scrollTop = 9999;
+            if(!isMe) showToast(d.message); 
+        });
+
+        // TYPING BUBBLE LOGIC
+        socket.on('display_typing', d => {
+            const chatWin = document.getElementById('chatWindow');
+            const existingBubble = document.getElementById('typingBubble');
+            
+            if (d.isTyping) {
+                showToast(`${d.name} is typing...`);
+                if (!existingBubble) {
+                    const bubble = `
+                        <div id="typingBubble" class="msg typing">
+                            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                        </div>`;
+                    chatWin.insertAdjacentHTML('beforeend', bubble);
+                    chatWin.scrollTop = 9999;
+                }
+            } else {
+                if (existingBubble) existingBubble.remove();
+            }
+        });
+
         socket.on('rejoined_game', d => {
             myRoom = d.roomId; myName = d.name; mySecret = d.secret;
             if(d.state === 'setup') switchView('setup');
@@ -492,7 +588,6 @@
         function showTipImmediate(e, t) { clearTimeout(tipT); showTip(e, t); tip.style.opacity='1'; }
         function hideTip() { clearTimeout(tipT); tip.style.opacity='0'; }
         
-        socket.on('display_typing', d => document.getElementById('typingIndicator').innerText = d.isTyping ? `${d.name} is typing...` : "");
         socket.on('error_msg', m => { document.getElementById('errorDisplay').innerText = m; setTimeout(()=>document.getElementById('errorDisplay').innerText="",3000); });
         socket.on('opponent_disconnected', d => { document.getElementById('disconnectOverlay').classList.remove('hidden'); document.getElementById('disconnectMsg').innerText = `${d.name} disconnected.`; });
         socket.on('timer_tick', d => { document.getElementById('countdownText').innerText = d.timeLeft; });
