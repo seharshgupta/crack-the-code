@@ -8,159 +8,145 @@
     <style>
         /* --- THEME VARIABLES --- */
         :root {
-            /* Light Theme */
-            --primary: #4f46e5;
-            --primary-fg: #ffffff;
-            --secondary: #64748b;
-            --success: #10b981;
-            --danger: #ef4444;
-            --background: #f1f5f9;
-            --surface: #ffffff;
-            --text: #1e293b;
-            --border: #e2e8f0;
-            --input-bg: #ffffff;
-            --radius: 12px;
-            --shadow: 0 4px 10px rgba(0,0,0,0.05);
+            --primary: #4f46e5; --primary-fg: #ffffff;
+            --secondary: #64748b; --success: #10b981; --danger: #ef4444;
+            --background: #f8fafc; --surface: #ffffff;
+            --text: #1e293b; --border: #cbd5e1; --input-bg: #ffffff;
+            --radius: 16px; --shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
         }
 
-        /* Dark Theme */
         [data-theme="dark"] {
-            --primary: #6366f1;
-            --primary-fg: #ffffff;
-            --secondary: #94a3b8;
-            --success: #34d399;
-            --danger: #f87171;
-            --background: #0f172a;
-            --surface: #1e293b;
-            --text: #f8fafc;
-            --border: #334155;
-            --input-bg: #0f172a;
-            --shadow: 0 4px 10px rgba(0,0,0,0.3);
+            --primary: #818cf8; --primary-fg: #ffffff;
+            --secondary: #94a3b8; --success: #34d399; --danger: #f87171;
+            --background: #0f172a; --surface: #1e293b; --text: #f1f5f9;
+            --border: #334155; --input-bg: #0f172a; --shadow: 0 10px 25px -5px rgba(0,0,0,0.5);
         }
 
-        body { font-family: 'Inter', system-ui, sans-serif; background: var(--background); color: var(--text); margin: 0; min-height: 100vh; display: flex; flex-direction: column; transition: background 0.3s, color 0.3s; }
-        .container { width: 100%; max-width: 900px; margin: 0 auto; padding: 20px; box-sizing: border-box; flex: 1; display: flex; flex-direction: column; position: relative; }
-        
+        /* UI STYLES */
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--background); color: var(--text); margin: 0; min-height: 100vh; display: flex; flex-direction: column; font-size: 16px; transition: background 0.3s, color 0.3s; }
+        .container { width: 100%; max-width: 950px; margin: 0 auto; padding: 20px; box-sizing: border-box; flex: 1; display: flex; flex-direction: column; position: relative; }
         .hidden { display: none !important; }
-        .card { background: var(--surface); padding: 25px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 20px; border: 1px solid var(--border); transition: background 0.3s; }
-        h2, h3, h4 { margin: 0 0 15px 0; text-align: center; color: var(--text); }
+        .card { background: var(--surface); padding: 30px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 25px; border: 1px solid var(--border); transition: background 0.3s; }
         
-        /* FROZEN HEADER */
+        /* HEADER - FIXED ALIGNMENT */
         .header-row { 
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; 
-            position: sticky; top: 0; z-index: 100; background: var(--background); 
-            margin-top: -20px; padding-top: 20px; padding-bottom: 15px;
-            margin-left: -20px; padding-left: 20px;
-            margin-right: -20px; padding-right: 20px;
-            border-bottom: 1px solid var(--border);
-            transition: background 0.3s, border-color 0.3s;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; /* Vertical Center */
+            margin-bottom: 25px; 
+            position: sticky; top: 0; z-index: 100; 
+            background: var(--background); 
+            margin-top: -20px; padding-top: 20px; padding-bottom: 5px; 
+            margin-left: -20px; padding-left: 20px; margin-right: -20px; padding-right: 20px;
+            border-bottom: 1px solid var(--border); 
+            transition: background 0.3s;
         }
-        .theme-select { padding: 5px 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 0.8rem; cursor: pointer; outline: none; }
-
-        /* Inputs & Buttons */
-        input { width: 100%; padding: 15px; margin-bottom: 15px; background: var(--input-bg); color: var(--text); border: 2px solid var(--border); border-radius: var(--radius); font-size: 16px; outline: none; box-sizing: border-box; transition: 0.2s; }
-        input:focus { border-color: var(--primary); }
-        input:disabled { opacity: 0.6; cursor: not-allowed; }
         
-        button { width: 100%; padding: 15px; background: var(--primary); color: var(--primary-fg); border: none; border-radius: var(--radius); font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.2s; margin-bottom: 10px; }
-        button:hover { opacity: 0.9; }
+        h2 { 
+            margin: 0; /* Reset margins to prevent push */
+            text-align: center; color: var(--text); font-weight: 800; letter-spacing: -0.5px; 
+            font-size: 1.8rem; 
+            line-height: 1; /* Tighter line height for better alignment */
+            display: flex; align-items: center; /* Ensure icon and text align */
+        }
+
+        .header-controls { 
+            display: flex; 
+            gap: 10px; 
+            align-items: center; /* Vertical Center Buttons */
+            height: 100%;
+        }
+        
+        /* THEME & MENU BUTTONS - FIXED SIZE SQUARES */
+        .icon-btn { 
+            background: transparent; border: none; color: var(--text); 
+            font-size: 1.4rem; cursor: pointer; 
+            border-radius: 12px; transition: transform 0.2s, background 0.2s;
+            /* Flex centering for icon inside button */
+            display: flex; align-items: center; justify-content: center;
+            width: 44px; height: 44px; padding: 0; 
+        }
+        .icon-btn:hover { background: var(--surface); transform: scale(1.05); box-shadow: var(--shadow); }
+        
+        .menu-dropdown { position: absolute; top: 65px; right: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); display: none; flex-direction: column; width: 180px; z-index: 200; overflow: hidden; }
+        .menu-dropdown button { background: transparent; color: var(--text); text-align: left; padding: 15px; margin: 0; border-radius: 0; border-bottom: 1px solid var(--border); font-size: 1rem; font-weight: 500; width: 100%; display: block; }
+        .menu-dropdown button:last-child { border-bottom: none; }
+        .menu-dropdown button:hover { background: var(--background); }
+
+        /* INPUTS & BUTTONS */
+        input { width: 100%; padding: 16px; margin-bottom: 18px; background: var(--input-bg); color: var(--text); border: 2px solid var(--border); border-radius: 12px; font-size: 1.1rem; outline: none; box-sizing: border-box; transition: 0.2s; }
+        input:focus { border-color: var(--primary); }
+        
+        button { width: 100%; padding: 16px; background: var(--primary); color: var(--primary-fg); border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: 0.2s; margin-bottom: 12px; }
+        button:active { transform: scale(0.98); }
         button:disabled { background: var(--secondary); opacity: 0.5; cursor: not-allowed; }
         button.secondary { background: var(--secondary); color: white; }
         button.success { background: var(--success); color: white; }
         button.danger { background: var(--danger); color: white; }
-        button.sm { width: auto; padding: 8px 16px; font-size: 14px; margin: 0; }
+        button.sm { width: auto; padding: 10px 20px; font-size: 0.95rem; margin: 0; }
 
-        /* Lobby */
-        .lobby-code { font-size: 3rem; font-weight: 800; color: var(--primary); letter-spacing: 5px; text-align: center; margin: 20px 0; }
-        .player-list li { background: var(--background); padding: 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; font-weight: 500; border: 1px solid var(--border); }
+        /* LISTS */
+        .lobby-list { list-style: none; padding: 0; max-height: 350px; overflow-y: auto; }
+        .lobby-item { background: var(--surface); padding: 18px; border: 2px solid var(--border); border-radius: 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s; font-size: 1.05rem; }
+        .lobby-item:hover { border-color: var(--primary); transform: translateY(-2px); }
+        
+        .request-item { background: var(--background); padding: 15px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); font-size: 1.05rem; }
+        .req-actions { display: flex; gap: 8px; }
+        .btn-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; padding: 0; margin: 0; }
 
-        /* Setup */
-        .setup-controls { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
-        .op-status-badge { background: var(--background); color: var(--secondary); padding: 8px 15px; border-radius: 20px; font-size: 0.85rem; display: inline-block; margin-bottom: 15px; font-weight: 600; border: 1px solid var(--border); }
+        /* SETUP */
+        .setup-controls { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
+        .op-status-badge { background: var(--background); color: var(--secondary); padding: 10px 20px; border-radius: 30px; font-size: 1rem; display: inline-block; margin-bottom: 20px; font-weight: 600; border: 1px solid var(--border); }
         .op-ready { background: rgba(16, 185, 129, 0.2); color: var(--success); border-color: var(--success); }
 
-        /* Game Layout */
-        .game-wrapper { display: flex; flex-direction: column; gap: 20px; height: 100%; }
-
+        /* GAME LAYOUT */
+        .game-wrapper { display: flex; flex-direction: column; gap: 25px; height: 100%; }
         @media (min-width: 900px) {
             .game-wrapper { flex-direction: row; align-items: flex-start; }
             .game-left { flex: 2; } 
-            .game-right { 
-                flex: 1; 
-                position: sticky; 
-                top: 80px; 
-                align-self: flex-start;
-                max-height: 90vh;
-                display: flex;
-                flex-direction: column;
-            } 
+            .game-right { flex: 1; position: sticky; top: 90px; align-self: flex-start; max-height: 85vh; display: flex; flex-direction: column; } 
             .chat-area { display: flex; flex-direction: column; height: auto; }
-            /* Chat Box Desktop: Grow but Cap at 60vh */
-            .chat-box { flex: none; min-height: 150px; max-height: 60vh; overflow-y: auto; }
+            .chat-box { flex: none; min-height: 200px; max-height: 60vh; overflow-y: auto; }
         }
 
-        /* Turn Banner */
-        .turn-indicator { padding: 15px; border-radius: var(--radius); text-align: center; font-weight: bold; font-size: 1.1rem; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
+        .turn-indicator { padding: 18px; border-radius: 12px; text-align: center; font-weight: 800; font-size: 1.2rem; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .turn-my { background: var(--success); color: white; }
         .turn-op { background: var(--surface); color: var(--secondary); border: 2px solid var(--border); }
+        .turn-rematch { background: var(--primary); color: white; cursor: pointer; animation: pulse 2s infinite; }
+        .turn-waiting { background: var(--secondary); color: white; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
 
-        /* Tables */
-        .boards-container { display: flex; gap: 15px; }
-        .board { flex: 1; background: var(--surface); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); border: 1px solid var(--border); }
-        .board-header { background: var(--background); padding: 12px; text-align: center; font-weight: 700; color: var(--secondary); text-transform: uppercase; border-bottom: 1px solid var(--border); }
+        .boards-container { display: flex; gap: 20px; }
+        .board { flex: 1; background: var(--surface); border-radius: 16px; box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; }
+        .board-header { background: var(--background); padding: 15px; text-align: center; font-weight: 700; color: var(--secondary); text-transform: uppercase; border-bottom: 1px solid var(--border); font-size: 1rem; letter-spacing: 1px; }
+        .table-scroll { max-height: 350px; overflow-y: auto; }
         
-        .table-scroll { max-height: 300px; overflow-y: auto; }
         table { width: 100%; border-collapse: collapse; }
-        th { position: sticky; top: 0; background: var(--surface); font-size: 0.75rem; text-transform: uppercase; color: var(--secondary); padding: 8px; border-bottom: 2px solid var(--border); }
-        td { padding: 10px; text-align: center; border-bottom: 1px solid var(--border); font-weight: 600; color: var(--text); }
+        th { position: sticky; top: 0; background: var(--surface); padding: 12px; border-bottom: 2px solid var(--border); color: var(--secondary); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        td { padding: 14px; text-align: center; border-bottom: 1px solid var(--border); font-weight: 700; color: var(--text); font-size: 1.1rem; }
 
-        /* --- JS POWERED TOOLTIP CSS --- */
-        .help-icon { 
-            display: inline-block; width: 16px; height: 16px; 
-            background: var(--secondary); color: white; 
-            border-radius: 50%; text-align: center; 
-            line-height: 16px; font-size: 11px; font-weight: bold; 
-            margin-left: 5px; cursor: help; 
-        }
+        /* TOOLTIPS & CHAT */
+        .tooltip-container { position: relative; display: inline-block; margin-left: 5px; cursor: help; }
+        .help-icon { display: inline-block; width: 20px; height: 20px; background: var(--secondary); color: white; border-radius: 50%; text-align: center; line-height: 20px; font-size: 12px; font-weight: bold; }
+        #floatingTooltip { position: fixed; z-index: 9999; background: #1e293b; color: white; padding: 12px; border-radius: 8px; font-size: 0.9rem; max-width: 200px; text-align: center; pointer-events: none; opacity: 0; transition: opacity 0.2s ease-in-out; box-shadow: 0 5px 20px rgba(0,0,0,0.4); }
 
-        #floatingTooltip {
-            position: fixed; /* Fixes clipping issue */
-            z-index: 9999;
-            background: #1e293b;
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            max-width: 180px;
-            text-align: center;
-            pointer-events: none; /* Let clicks pass through */
-            opacity: 0;
-            transition: opacity 0.2s ease-in-out;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-
-        /* Chat */
         .chat-area { margin-top: auto; display: flex; flex-direction: column; }
-        .chat-box { 
-            min-height: 200px; 
-            max-height: 300px; /* Mobile Cap */
-            overflow-y: auto; 
-            background: var(--surface); 
-            border-radius: var(--radius); 
-            padding: 10px; 
-            margin-bottom: 10px; 
-            border: 1px solid var(--border); 
-            display: flex; 
-            flex-direction: column; 
-            gap: 6px; 
-        }
-        .msg { padding: 6px 10px; border-radius: 8px; font-size: 0.9rem; max-width: 80%; width: fit-content; word-wrap: break-word; }
+        .chat-box { min-height: 250px; max-height: 400px; overflow-y: auto; background: var(--surface); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
+        .msg { padding: 10px 15px; border-radius: 12px; font-size: 1rem; max-width: 80%; width: fit-content; word-wrap: break-word; line-height: 1.5; }
         .msg.me { align-self: flex-end; background: var(--primary); color: var(--primary-fg); border-bottom-right-radius: 2px; }
         .msg.them { align-self: flex-start; background: var(--background); color: var(--text); border: 1px solid var(--border); border-bottom-left-radius: 2px; }
-        
-        .input-group { display: flex; gap: 10px; }
-        .input-group input { margin: 0; }
-        .input-group button { margin: 0; width: auto; }
+        .input-group { display: flex; gap: 10px; } .input-group input { margin: 0; } .input-group button { margin: 0; width: auto; }
+
+        /* LEADERBOARD TABLE */
+        .lb-table { width: 100%; border-collapse: collapse; font-size: 1rem; margin-top: 15px; }
+        .lb-table th { text-align: left; background: var(--background); padding: 12px; }
+        .lb-table td { padding: 12px; border-bottom: 1px solid var(--border); }
+
+        /* OVERLAYS */
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 500; backdrop-filter: blur(4px); }
+        .overlay-card { background: var(--surface); padding: 40px; border-radius: 24px; width: 90%; max-width: 450px; text-align: center; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.3); border: 1px solid var(--border); }
+        .close-btn { position: absolute; top: 15px; right: 20px; background: transparent; color: var(--text); font-size: 1.5rem; cursor: pointer; width: auto; padding: 0; margin: 0; opacity: 0.6; }
+        .close-btn:hover { opacity: 1; }
 
         @media (max-width: 600px) { .boards-container { flex-direction: column; } }
     </style>
@@ -171,54 +157,66 @@
 
     <div class="container">
         <div class="header-row">
-            <h2 style="margin:0">🔐 Crack the Code</h2>
-            <select id="themeSelector" class="theme-select" onchange="applyTheme(this.value)">
-                <option value="system">🌗 System</option>
-                <option value="light">☀️ Light</option>
-                <option value="dark">🌑 Dark</option>
-            </select>
+            <h2>🔐 Crack the Code</h2>
+            <div class="header-controls">
+                <button id="themeBtn" class="icon-btn" onclick="toggleTheme()" title="Toggle Theme">🌑</button>
+                <button class="icon-btn" onclick="toggleMenu()" title="Menu">⋮</button>
+            </div>
+        </div>
+
+        <div id="menuDropdown" class="menu-dropdown">
+            <button onclick="showLeaderboard()">🏆 Leaderboard</button>
+            <button onclick="exitLobby()" style="color:var(--danger)">🚪 Exit Lobby</button>
         </div>
 
         <div id="view-menu">
-            <div style="margin-top: 20px;">
+            <div style="margin-top: 30px;">
                 <button id="rejoinBtn" class="success hidden" onclick="doRejoin()">🔄 Rejoin Last Game</button>
                 <div class="card">
-                    <button onclick="switchView('create')">Create Room</button>
-                    <button class="secondary" onclick="switchView('join')">Join Room</button>
+                    <button onclick="switchView('host')">Host a Game</button>
+                    <button class="secondary" onclick="fetchLobbies()">Join a Lobby</button>
                 </div>
             </div>
         </div>
 
-        <div id="view-create" class="hidden">
+        <div id="view-host" class="hidden">
             <div class="card">
-                <h3>Create Game</h3>
-                <input id="createName" placeholder="Enter Your Name">
-                <button onclick="doCreate()">Generate Room</button>
+                <h3>Host Lobby</h3>
+                <input id="hostName" placeholder="Enter Your Name">
+                <button onclick="doHost()">Create Lobby</button>
                 <button class="secondary" onclick="switchView('menu')">Back</button>
             </div>
         </div>
 
-        <div id="view-join" class="hidden">
+        <div id="view-lobbies" class="hidden">
             <div class="card">
-                <h3>Join Game</h3>
-                <input id="joinName" placeholder="Enter Your Name">
-                <input id="joinRoomId" type="tel" placeholder="4-Digit Room Code">
-                <button onclick="doJoin()">Join Room</button>
-                <button class="secondary" onclick="switchView('menu')">Back</button>
+                <h3>Available Lobbies</h3>
+                <button class="sm secondary" onclick="fetchLobbies()" style="margin-bottom:20px; width:100%">🔄 Refresh List</button>
+                <input id="joinerName" placeholder="Enter Your Name">
+                <ul id="lobbyListDisplay" class="lobby-list"><li style="text-align:center; color:var(--secondary)">Loading...</li></ul>
+                <button class="secondary" onclick="switchView('menu')" style="margin-top:20px">Back</button>
             </div>
         </div>
 
-        <div id="view-lobby" class="hidden">
+        <div id="view-wait-host" class="hidden">
             <div class="card" style="text-align: center;">
-                <h3>Lobby</h3>
-                <div id="lobbyRoomId" class="lobby-code">----</div>
-                <button class="sm secondary" onclick="copyInvite()">📋 Copy Invite</button>
-                <div style="margin-top:20px; text-align: left;">
-                    <p style="font-size:0.9rem; font-weight:bold; color:var(--secondary)">Players:</p>
-                    <ul id="lobbyList" class="player-list" style="list-style:none; padding:0"></ul>
+                <h3>Your Lobby</h3>
+                <p style="color:var(--secondary)">Room Code</p>
+                <div id="hostRoomId" class="lobby-code" style="font-size:3rem; font-weight:800; color:var(--primary); letter-spacing:5px;">----</div>
+                <div style="margin-top:30px; text-align: left;">
+                    <h4>Join Requests</h4>
+                    <div id="requestList"><p style="color:var(--secondary); text-align:center; font-size:1rem">Waiting for players...</p></div>
                 </div>
-                <button id="hostStartBtn" onclick="hostStartGame()" class="hidden success" style="margin-top:20px" disabled>Start Setup</button>
-                <p id="waitingMsg" class="hidden" style="color:var(--secondary); margin-top:20px">Waiting for host to start...</p>
+                <button id="startGameBtn" class="success hidden" onclick="hostStartGame()" style="margin-top:20px">Start Game</button>
+            </div>
+        </div>
+
+        <div id="view-wait-joiner" class="hidden">
+            <div class="card" style="text-align: center; padding: 50px 20px;">
+                <h3>Request Sent</h3>
+                <p style="color:var(--secondary); font-size:1.1rem">Waiting for host to accept...</p>
+                <div style="font-size:3rem; margin:20px 0;">⏳</div>
+                <button class="danger" onclick="cancelJoin()" style="margin-top:20px; width:auto">Cancel</button>
             </div>
         </div>
 
@@ -226,431 +224,279 @@
             <div class="card" style="text-align: center;">
                 <h3 id="welcomeMsg">Set Your Secret</h3>
                 <div id="opSetupStatus" class="op-status-badge">Opponent is choosing...</div>
-                
-                <p style="color:var(--secondary); font-size:0.9rem;">Enter 4 unique digits.</p>
-                <input id="secretInput" type="tel" maxlength="4" placeholder="1234" style="text-align:center; font-size: 2rem; letter-spacing: 5px; font-weight:bold;">
-                
+                <p style="color:var(--secondary); font-size:1rem;">Enter 4 unique digits.</p>
+                <input id="secretInput" type="tel" maxlength="4" placeholder="1234" style="text-align:center; font-size: 2.5rem; letter-spacing: 8px; font-weight:bold;">
                 <div class="setup-controls">
                     <button id="lockBtn" onclick="toggleSecretLock()" class="secondary" style="width: auto;">🔒 Lock Secret</button>
-                    <button id="readyBtn" onclick="sendReady()" class="success hidden" style="width: auto;">✅ I'm Ready</button>
+                    <button id="unlockBtn" onclick="unlockSecret()" class="danger hidden" style="width: auto;">🔓 Edit</button>
+                    <button id="readyBtn" onclick="sendReady()" class="success hidden" style="width: auto;">✅ Ready</button>
                 </div>
-                
-                <p id="setupStatus" style="color:var(--primary); font-weight:500; min-height: 20px; margin-top:15px"></p>
+                <p id="setupStatus" style="color:var(--primary); font-weight:600; min-height: 20px; margin-top:20px"></p>
             </div>
         </div>
 
         <div id="view-game" class="hidden">
             <div class="game-wrapper">
                 <div class="game-left">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <span>Room: <b id="gameRoomDisplay"></b></span>
-                        <div style="background:var(--background); padding:5px 10px; border-radius:8px; border:1px solid var(--border); font-size:0.9rem;">
-                            Secret: <b id="gameSecretDisplay">****</b>
-                        </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <span style="font-size:1.1rem; font-weight:600">Room: <b id="gameRoomDisplay"></b></span>
+                        <div style="background:var(--background); padding:8px 15px; border-radius:10px; border:2px solid var(--border); font-size:1rem; font-weight:600">Secret: <b id="gameSecretDisplay">****</b></div>
                     </div>
-
                     <div id="turnBanner" class="turn-indicator"></div>
-
-                    <div class="card" style="padding: 15px;">
+                    <div class="card" style="padding: 20px;">
                         <div class="input-group">
                             <input id="guessInput" type="tel" maxlength="4" placeholder="Enter Guess">
-                            <button id="guessBtn" onclick="makeGuess()" style="width:100px;">Submit</button>
+                            <button id="guessBtn" onclick="makeGuess()" style="width: 120px;">Submit</button>
                         </div>
                     </div>
-
                     <div class="boards-container">
                         <div class="board">
                             <div class="board-header">My Guesses</div>
                             <div class="table-scroll">
-                                <table>
-                                    <thead><tr>
-                                        <th>Guess</th>
-                                        <th>Bulls 
-                                            <span class="help-icon" 
-                                                  onmouseenter="showTip(event, 'bulls')" 
-                                                  onmouseleave="hideTip()"
-                                                  onclick="showTipImmediate(event, 'bulls')">?</span>
-                                        </th>
-                                        <th>Cows
-                                            <span class="help-icon" 
-                                                  onmouseenter="showTip(event, 'cows')" 
-                                                  onmouseleave="hideTip()"
-                                                  onclick="showTipImmediate(event, 'cows')">?</span>
-                                        </th>
-                                    </tr></thead>
-                                    <tbody id="myHistory"></tbody>
-                                </table>
+                                <table><thead><tr><th>Guess</th><th>Bulls <span class="help-icon" onmouseenter="showTip(event, 'bulls')" onmouseleave="hideTip()">?</span></th><th>Cows <span class="help-icon" onmouseenter="showTip(event, 'cows')" onmouseleave="hideTip()">?</span></th></tr></thead><tbody id="myHistory"></tbody></table>
                             </div>
                         </div>
                         <div class="board">
-                            <div class="board-header" id="opNameDisplay">Opponent</div>
+                            <div class="board-header">
+                                <span id="opNameDisplay">Opponent</span>
+                                <span id="opSecretReveal" style="display:none; color:var(--danger); font-size:0.9rem; display:block; margin-top:5px; font-weight:800;"></span>
+                            </div>
                             <div class="table-scroll">
-                                <table>
-                                    <thead><tr>
-                                        <th>Guess</th>
-                                        <th>Bulls 
-                                            <span class="help-icon" 
-                                                  onmouseenter="showTip(event, 'bulls')" 
-                                                  onmouseleave="hideTip()"
-                                                  onclick="showTipImmediate(event, 'bulls')">?</span>
-                                        </th>
-                                        <th>Cows
-                                            <span class="help-icon" 
-                                                  onmouseenter="showTip(event, 'cows')" 
-                                                  onmouseleave="hideTip()"
-                                                  onclick="showTipImmediate(event, 'cows')">?</span>
-                                        </th>
-                                    </tr></thead>
-                                    <tbody id="opHistory"></tbody>
-                                </table>
+                                <table><thead><tr><th>Guess</th><th>Bulls <span class="help-icon" onmouseenter="showTip(event, 'bulls')" onmouseleave="hideTip()">?</span></th><th>Cows <span class="help-icon" onmouseenter="showTip(event, 'cows')" onmouseleave="hideTip()">?</span></th></tr></thead><tbody id="opHistory"></tbody></table>
                             </div>
                         </div>
                     </div>
                 </div>
-
                 <div class="game-right">
-                    <div class="chat-area card" style="padding:15px; margin:0;">
-                        <h4 style="margin:0 0 10px 0; color:var(--secondary)">Chat</h4>
-                        <div id="typingIndicator" style="font-size: 0.8rem; color: var(--secondary); height: 20px; padding-left: 5px; font-style:italic;"></div>
+                    <div class="chat-area card" style="padding:20px; margin:0;">
+                        <h4 style="margin:0 0 15px 0; color:var(--secondary)">Chat</h4>
+                        <div id="typingIndicator" style="font-size: 0.9rem; color: var(--primary); height: 20px; padding-left: 5px; font-weight:600; font-style:italic;"></div>
                         <div class="chat-box" id="chatWindow"></div>
-                        <div class="input-group">
-                            <input id="chatInput" placeholder="Message...">
-                            <button class="sm" onclick="sendChat()">Send</button>
-                        </div>
+                        <div class="input-group"><input id="chatInput" placeholder="Message..."><button class="sm" onclick="sendChat()">Send</button></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <p id="errorDisplay" style="text-align:center; color:var(--danger); font-weight:600; padding:10px;"></p>
+    <p id="errorDisplay" style="text-align:center; color:var(--danger); font-weight:700; padding:10px; font-size:1.1rem;"></p>
 
-    <div id="disconnectOverlay" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,0.9); display:flex; justify-content:center; align-items:center; z-index:200;">
-        <div class="card" style="text-align:center; max-width:350px; border:2px solid var(--danger)">
-            <h2 style="color:var(--danger)">⚠️ Player Disconnected</h2>
-            <p id="disconnectMsg" style="font-weight:bold;"></p>
-            <p style="color:var(--secondary); font-size:0.9rem">Wait time remaining:</p>
-            <div style="font-size:3rem; font-weight:800; margin:10px 0" id="countdownText">60</div>
+    <div id="leaderboardOverlay" class="overlay hidden" onclick="this.classList.add('hidden')">
+        <div class="overlay-card" onclick="event.stopPropagation()">
+            <button class="close-btn" onclick="document.getElementById('leaderboardOverlay').classList.add('hidden')">✕</button>
+            <h3>🏆 Leaderboard</h3>
+            <div id="lbContent" style="font-size:1.1rem">Loading...</div>
         </div>
     </div>
 
-    <div id="winOverlay" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,0.8); display:flex; justify-content:center; align-items:center; z-index:100;">
-        <div class="card" style="text-align:center; max-width:350px;">
-            <h1 id="winTitle" style="font-size: 3rem; margin-bottom: 10px;">🏆</h1>
+    <div id="disconnectOverlay" class="overlay hidden">
+        <div class="overlay-card" style="border: 3px solid var(--danger);">
+            <h2 style="color:var(--danger)">⚠️ Player Disconnected</h2>
+            <p id="disconnectMsg" style="font-weight:700; font-size:1.2rem; margin:20px 0;"></p>
+            <p style="color:var(--secondary); font-size:1rem">Wait time remaining:</p>
+            <div style="font-size:4rem; font-weight:800; margin:15px 0" id="countdownText">60</div>
+        </div>
+    </div>
+
+    <div id="winOverlay" class="overlay hidden">
+        <div class="overlay-card">
+            <button class="close-btn" onclick="document.getElementById('winOverlay').classList.add('hidden')">✕</button>
+            <h1 id="winTitle" style="font-size: 4rem; margin-bottom: 15px;">🏆</h1>
             <h2 id="winHeader">Victory!</h2>
-            <p id="winMsg" style="color:var(--secondary); margin-bottom:25px"></p>
+            <p id="winMsg" style="color:var(--secondary); margin-bottom:30px; font-size:1.2rem;"></p>
             <button onclick="requestRematch()">🔄 Play Again</button>
-            <button onclick="exitRoom()" class="secondary">🚪 Exit Room</button>
+            <button onclick="exitLobby()" class="secondary">🚪 Exit Lobby</button>
         </div>
     </div>
 
     <script>
         const socket = io({ reconnection: true });
         let myName = "", myRoom = "", mySecret = "", isHost = false;
-
-        // --- PERSISTENT TOKEN ---
         let myToken = localStorage.getItem('playerToken');
-        if(!myToken) {
-            myToken = Math.random().toString(36).substring(2) + Date.now().toString(36);
-            localStorage.setItem('playerToken', myToken);
+        if(!myToken) { myToken = Math.random().toString(36).substring(2) + Date.now().toString(36); localStorage.setItem('playerToken', myToken); }
+
+        const inputs = { hostName: document.getElementById('hostName'), joinerName: document.getElementById('joinerName'), secret: document.getElementById('secretInput'), guess: document.getElementById('guessInput'), chat: document.getElementById('chatInput') };
+
+        // --- THEME LOGIC ---
+        let currentTheme = localStorage.getItem('theme');
+        if (!currentTheme) {
+            currentTheme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+        }
+        applyTheme(currentTheme);
+
+        function toggleTheme() {
+            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+            applyTheme(currentTheme);
         }
 
-        const inputs = {
-            createName: document.getElementById('createName'),
-            joinName: document.getElementById('joinName'),
-            joinRoomId: document.getElementById('joinRoomId'),
-            secret: document.getElementById('secretInput'),
-            guess: document.getElementById('guessInput'),
-            chat: document.getElementById('chatInput')
-        };
-
-        // --- TOOLTIP LOGIC (JS DRIVEN) ---
-        let tooltipTimer;
-        const tooltipEl = document.getElementById('floatingTooltip');
-
-        function setTooltipContent(type) {
-            if(type === 'bulls') return "🎯 Bulls<br>Correct Digit, Correct Spot.";
-            if(type === 'cows') return "🐮 Cows<br>Correct Digit, Wrong Spot.";
-        }
-
-        function positionTooltip(e) {
-            const rect = e.target.getBoundingClientRect();
-            tooltipEl.style.top = (rect.top - 50) + 'px'; // Position above
-            tooltipEl.style.left = (rect.left - 60) + 'px'; // Center roughly
-        }
-
-        function showTip(e, type) {
-            tooltipEl.innerHTML = setTooltipContent(type);
-            positionTooltip(e);
-            
-            // Wait 1 second before showing
-            tooltipTimer = setTimeout(() => {
-                tooltipEl.style.opacity = '1';
-            }, 1000);
-        }
-
-        function showTipImmediate(e, type) {
-            clearTimeout(tooltipTimer); // Clear any pending timer
-            tooltipEl.innerHTML = setTooltipContent(type);
-            positionTooltip(e);
-            tooltipEl.style.opacity = '1'; // Show instantly
-        }
-
-        function hideTip() {
-            clearTimeout(tooltipTimer);
-            tooltipEl.style.opacity = '0';
-        }
-
-
-        // --- THEME ---
         function applyTheme(theme) {
             localStorage.setItem('theme', theme);
             const root = document.documentElement;
-            if (theme === 'dark') root.setAttribute('data-theme', 'dark');
-            else if (theme === 'light') root.removeAttribute('data-theme');
-            else {
-                if (window.matchMedia('(prefers-color-scheme: dark)').matches) root.setAttribute('data-theme', 'dark');
-                else root.removeAttribute('data-theme');
+            if (theme === 'dark') {
+                root.setAttribute('data-theme', 'dark');
+                document.getElementById('themeBtn').innerText = '☀️';
+            } else {
+                root.removeAttribute('data-theme');
+                document.getElementById('themeBtn').innerText = '🌑';
             }
         }
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-            if (localStorage.getItem('theme') === 'system') applyTheme('system');
-        });
 
         // --- INIT ---
         window.onload = () => {
-            const savedTheme = localStorage.getItem('theme') || 'system';
-            document.getElementById('themeSelector').value = savedTheme;
-            applyTheme(savedTheme);
-
             const savedName = localStorage.getItem('playerName');
-            if(savedName) {
-                inputs.createName.value = savedName;
-                inputs.joinName.value = savedName;
-            }
-
+            if(savedName) { inputs.hostName.value = savedName; inputs.joinerName.value = savedName; }
             if(localStorage.getItem('lastRoom')) {
-                const btn = document.getElementById('rejoinBtn');
-                btn.classList.remove('hidden');
-                btn.innerText = `🔄 Rejoin Room ${localStorage.getItem('lastRoom')}`;
+                document.getElementById('rejoinBtn').classList.remove('hidden');
+                document.getElementById('rejoinBtn').innerText = `🔄 Rejoin Room ${localStorage.getItem('lastRoom')}`;
             }
         };
 
-        const screens = ['menu', 'create', 'join', 'lobby', 'setup', 'game'];
-        function switchView(v) { 
-            screens.forEach(id => document.getElementById('view-'+id).classList.add('hidden'));
-            document.getElementById('view-'+v).classList.remove('hidden'); 
-            document.getElementById('errorDisplay').innerText = "";
+        const views = ['menu', 'host', 'lobbies', 'wait-host', 'wait-joiner', 'setup', 'game'];
+        function switchView(v) { views.forEach(id => document.getElementById('view-'+id).classList.add('hidden')); document.getElementById('view-'+v).classList.remove('hidden'); document.getElementById('errorDisplay').innerText = ""; }
+
+        function toggleMenu() { const menu = document.getElementById('menuDropdown'); menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex'; }
+        document.addEventListener('click', (e) => { if (!e.target.closest('.header-controls')) document.getElementById('menuDropdown').style.display = 'none'; });
+
+        function exitLobby() {
+            if(confirm("Exit Lobby?")) {
+                socket.emit('leave_room', { roomId: myRoom, token: myToken });
+                localStorage.removeItem('lastRoom'); location.reload();
+            }
         }
 
-        // --- EVENTS ---
-        inputs.chat.addEventListener('keydown', (e) => { if(e.key === 'Enter') { sendChat(); inputs.chat.focus(); } });
-        inputs.guess.addEventListener('keydown', (e) => { if(e.key === 'Enter') { makeGuess(); inputs.guess.focus(); } });
-        
-        // Typing Logic
-        let typeTimer;
-        inputs.chat.addEventListener('input', () => {
-            socket.emit('typing', { roomId: myRoom, token: myToken, isTyping: true });
-            clearTimeout(typeTimer);
-            typeTimer = setTimeout(() => {
-                socket.emit('typing', { roomId: myRoom, token: myToken, isTyping: false });
-            }, 1000);
+        function showLeaderboard() { socket.emit('get_leaderboard', { roomId: myRoom }); document.getElementById('leaderboardOverlay').classList.remove('hidden'); }
+        socket.on('leaderboard_data', data => {
+            const content = document.getElementById('lbContent');
+            if(!data) { content.innerHTML = "No games played."; return; }
+            content.innerHTML = `
+                <div style="display:flex; justify-content:space-around; margin-bottom:20px; font-weight:bold; font-size:1.2rem">
+                    ${Object.entries(data.wins).map(([n, c]) => `<div>${n}: <span style="color:var(--primary)">${c}</span></div>`).join('')}
+                </div>
+                <div style="max-height:250px; overflow-y:auto"><table class="lb-table"><thead><tr><th style="width:50px">S.No</th><th>Winner</th><th>Guesses</th><th>Secret</th></tr></thead><tbody>
+                    ${data.history.map((h, i) => `<tr><td>${i+1}</td><td>${h.winner}</td><td>${h.guesses}</td><td>${h.secret}</td></tr>`).join('')}
+                </tbody></table></div>`;
         });
 
-        // --- CORE ACTIONS ---
-        function doCreate() { 
-            myName = inputs.createName.value.trim(); 
-            if(myName) { 
-                isHost = true; 
-                localStorage.setItem('playerName', myName);
-                socket.emit('create_room', { name: myName, token: myToken }); 
-            }
-        }
-        function doJoin() { 
-            myName = inputs.joinName.value.trim(); 
-            myRoom = inputs.joinRoomId.value.trim(); 
-            if(myName && myRoom) { 
-                isHost = false; 
-                localStorage.setItem('playerName', myName);
-                socket.emit('join_room', { roomId: myRoom, name: myName, token: myToken }); 
-            }
-        }
-        function doRejoin() { 
-            myRoom = localStorage.getItem('lastRoom'); 
-            socket.emit('rejoin_room', { roomId: myRoom, token: myToken }); 
-        }
+        // HOST
+        function doHost() { myName = inputs.hostName.value.trim(); if(!myName) return; localStorage.setItem('playerName', myName); isHost = true; socket.emit('create_room', { name: myName, token: myToken }); }
+        socket.on('room_created', d => { myRoom = d.roomId; localStorage.setItem('lastRoom', myRoom); switchView('wait-host'); document.getElementById('hostRoomId').innerText = myRoom; });
+        socket.on('join_request_received', d => {
+            const list = document.getElementById('requestList'); if(list.innerText.includes('Waiting')) list.innerHTML = "";
+            const div = document.createElement('div'); div.className = 'request-item'; div.id = `req-${d.suitorToken}`;
+            div.innerHTML = `<span><b>${d.suitorName}</b></span><div class="req-actions"><button class="btn-icon success" onclick="respondJoin('${d.suitorToken}', true)">✔</button><button class="btn-icon danger" onclick="respondJoin('${d.suitorToken}', false)">✖</button></div>`;
+            list.appendChild(div);
+        });
+        function respondJoin(suitorToken, accepted) { socket.emit('handle_request', { roomId: myRoom, suitorToken, accepted }); document.getElementById(`req-${suitorToken}`).remove(); }
+        socket.on('player_accepted', d => { document.getElementById('requestList').innerHTML = `<div style="text-align:center; color:var(--success); font-weight:bold; font-size:1.2rem">${d.name} Joined!</div>`; document.getElementById('startGameBtn').classList.remove('hidden'); });
 
-        // --- LOBBY/SETUP ---
+        // JOINER
+        function fetchLobbies() { myName = inputs.joinerName.value.trim(); if(!myName) return alert("Enter Name"); localStorage.setItem('playerName', myName); switchView('lobbies'); socket.emit('get_lobbies'); }
+        socket.on('lobby_list', list => {
+            const ul = document.getElementById('lobbyListDisplay'); ul.innerHTML = ""; if(!list.length) ul.innerHTML = "<li>No lobbies.</li>";
+            list.forEach(r => {
+                const li = document.createElement('li'); li.className = 'lobby-item'; li.innerHTML = `<span>${r.host}</span><span>${r.id}</span>`;
+                li.onclick = () => { myRoom = r.id; socket.emit('request_join', { roomId: r.id, token: myToken, name: myName }); switchView('wait-joiner'); };
+                ul.appendChild(li);
+            });
+        });
+        function cancelJoin() { socket.emit('cancel_join_request', { roomId: myRoom, token: myToken }); switchView('lobbies'); }
+        socket.on('join_approved', d => { myRoom = d.roomId; localStorage.setItem('lastRoom', myRoom); document.querySelector('#view-wait-joiner h3').innerText = "Joined!"; document.querySelector('#view-wait-joiner p').innerText = "Waiting for host..."; });
+        socket.on('join_rejected', () => { alert("Rejected."); switchView('lobbies'); });
+
+        // SETUP
         function hostStartGame() { socket.emit('host_start_setup', { roomId: myRoom }); }
-        
-        let isLocked = false;
         function toggleSecretLock() {
-            const val = inputs.secret.value;
-            if(!isLocked) {
-                if(!/^\d{4}$/.test(val) || new Set(val).size !== 4) return alert("Enter 4 UNIQUE digits.");
-                mySecret = val;
-                inputs.secret.disabled = true;
-                document.getElementById('lockBtn').classList.add('hidden');
-                document.getElementById('readyBtn').classList.remove('hidden');
-                document.getElementById('setupStatus').innerText = "Secret Locked.";
-                isLocked = true;
-            }
+            const val = inputs.secret.value; if(!/^\d{4}$/.test(val) || new Set(val).size !== 4) return alert("4 UNIQUE digits.");
+            mySecret = val; inputs.secret.disabled = true; document.getElementById('lockBtn').classList.add('hidden'); document.getElementById('unlockBtn').classList.remove('hidden'); document.getElementById('readyBtn').classList.remove('hidden'); document.getElementById('setupStatus').innerText = "Secret Locked.";
         }
-
-        function sendReady() {
-            document.getElementById('readyBtn').disabled = true;
-            document.getElementById('setupStatus').innerText = "Waiting for game start...";
-            socket.emit('player_ready', { roomId: myRoom, token: myToken, secret: mySecret });
-        }
-
-        // --- GAMEPLAY ---
-        function makeGuess() {
-            const val = inputs.guess.value;
-            if(!/^\d{4}$/.test(val)) return;
-
-            // FIX: Prevent Duplicate Guesses
-            const previousGuesses = Array.from(document.querySelectorAll('#myHistory tr td:first-child')).map(td => td.innerText.trim());
-            if(previousGuesses.includes(val)) {
-                document.getElementById('errorDisplay').innerText = "Already guessed!";
-                setTimeout(()=>document.getElementById('errorDisplay').innerText = "", 2000);
-                return;
-            }
-
-            socket.emit('make_guess', { roomId: myRoom, token: myToken, guess: val });
-            inputs.guess.value = "";
-        }
-
-        function sendChat() { 
-            const m = inputs.chat.value.trim(); 
-            if(m) { 
-                socket.emit('send_chat', { roomId: myRoom, message: m, token: myToken }); 
-                inputs.chat.value = ""; 
-            } 
-        }
-
-        // --- SOCKET LISTENERS ---
-        socket.on('room_created', d => { 
-            myRoom = d.roomId; localStorage.setItem('lastRoom', myRoom); 
-            switchView('lobby'); document.getElementById('lobbyRoomId').innerText = myRoom; 
-            document.getElementById('hostStartBtn').classList.remove('hidden');
-        });
-        
-        socket.on('joined_success', d => { 
-            myRoom = d.roomId; localStorage.setItem('lastRoom', myRoom); 
-            switchView('lobby'); document.getElementById('lobbyRoomId').innerText = myRoom; 
-            document.getElementById('waitingMsg').classList.remove('hidden');
-        });
-
-        socket.on('lobby_update', d => {
-            const list = document.getElementById('lobbyList');
-            list.innerHTML = d.players.map(p => `<li>${p.name} ${p.isMe?'(You)':''}</li>`).join('');
-            if(isHost) document.getElementById('hostStartBtn').disabled = d.players.length < 2;
-        });
+        function unlockSecret() { inputs.secret.disabled = false; document.getElementById('lockBtn').classList.remove('hidden'); document.getElementById('unlockBtn').classList.add('hidden'); document.getElementById('readyBtn').classList.add('hidden'); document.getElementById('setupStatus').innerText = "Editing..."; }
+        function sendReady() { document.getElementById('readyBtn').disabled = true; document.getElementById('unlockBtn').classList.add('hidden'); document.getElementById('setupStatus').innerText = "Waiting..."; socket.emit('player_ready', { roomId: myRoom, token: myToken, secret: mySecret }); }
 
         socket.on('enter_setup', () => { 
-            switchView('setup'); 
-            isLocked = false; inputs.secret.value = ""; inputs.secret.disabled = false;
-            document.getElementById('lockBtn').classList.remove('hidden');
-            document.getElementById('readyBtn').classList.add('hidden');
-            document.getElementById('readyBtn').disabled = false;
-            document.getElementById('setupStatus').innerText = "";
-            document.getElementById('opSetupStatus').innerText = "Opponent is choosing...";
-            document.getElementById('opSetupStatus').className = "op-status-badge";
+            switchView('setup'); inputs.secret.value = ""; inputs.secret.disabled = false; document.getElementById('lockBtn').classList.remove('hidden'); document.getElementById('unlockBtn').classList.add('hidden'); document.getElementById('readyBtn').classList.add('hidden'); document.getElementById('readyBtn').disabled = false;
+            document.getElementById('opSetupStatus').innerText = "Choosing..."; document.getElementById('opSetupStatus').className = "op-status-badge";
         });
-
-        socket.on('op_ready_state', () => {
-            document.getElementById('opSetupStatus').innerText = "Opponent is Ready ✅";
-            document.getElementById('opSetupStatus').className = "op-status-badge op-ready";
-        });
-
+        socket.on('op_ready_state', () => { document.getElementById('opSetupStatus').innerText = "Ready ✅"; document.getElementById('opSetupStatus').className = "op-status-badge op-ready"; });
+        
         socket.on('game_start', d => {
-            switchView('game');
-            document.getElementById('gameRoomDisplay').innerText = myRoom;
-            document.getElementById('gameSecretDisplay').innerText = mySecret;
-            document.getElementById('opNameDisplay').innerText = d.opponent;
-            document.getElementById('myHistory').innerHTML = "";
-            document.getElementById('opHistory').innerHTML = "";
+            switchView('game'); document.getElementById('gameRoomDisplay').innerText = myRoom; document.getElementById('gameSecretDisplay').innerText = mySecret; document.getElementById('opNameDisplay').innerText = d.opponent; document.getElementById('opSecretReveal').style.display = 'none';
+            document.getElementById('myHistory').innerHTML = ""; document.getElementById('opHistory').innerHTML = "";
             updateTurn(d.turnToken);
         });
 
         socket.on('guess_result', d => {
-            const isMe = d.playerToken === myToken; 
-            addGuessRow(isMe?'myHistory':'opHistory', d.guess, d.bulls, d.cows);
+            const isMe = d.playerToken === myToken; addGuessRow(isMe?'myHistory':'opHistory', d.guess, d.bulls, d.cows);
             if(d.winner) {
                 document.getElementById('winOverlay').classList.remove('hidden');
-                document.getElementById('winTitle').innerText = isMe ? "🏆" : "💀";
-                document.getElementById('winHeader').innerText = isMe ? "VICTORY!" : "DEFEAT";
-                document.getElementById('winMsg').innerText = isMe ? "Code Cracked!" : `${d.playerName} cracked it: ${mySecret}`;
+                document.getElementById('winTitle').innerText = isMe ? "🏆" : "💀"; document.getElementById('winHeader').innerText = isMe ? "VICTORY!" : "DEFEAT"; document.getElementById('winMsg').innerText = isMe ? "Code Cracked!" : `${d.playerName} cracked it.`;
+                
+                if (d.secrets) {
+                    const opToken = Object.keys(d.secrets).find(t => t !== myToken);
+                    if (opToken) {
+                        const rev = document.getElementById('opSecretReveal');
+                        rev.innerText = `Code: ${d.secrets[opToken]}`;
+                        rev.style.display = 'block';
+                    }
+                }
+
+                const ban = document.getElementById('turnBanner'); ban.innerText = "🔄 Request Rematch"; ban.className = "turn-indicator turn-rematch"; ban.onclick = requestRematch;
+                document.getElementById('guessBtn').disabled = true; inputs.guess.disabled = true;
             } else updateTurn(d.turnToken);
         });
 
-        socket.on('receive_chat', d => {
-            const isMe = d.playerToken === myToken;
-            const chatWin = document.getElementById('chatWindow');
-            chatWin.insertAdjacentHTML('beforeend', `<div class="msg ${isMe?'me':'them'}"></b>${d.message}</div>`);
-            chatWin.scrollTop = chatWin.scrollHeight;
-        });
+        // UTILS
+        function updateTurn(token) { const isMe = token === myToken; const ban = document.getElementById('turnBanner'); ban.innerText = isMe ? "Your Turn" : "Opponent's Turn"; ban.className = "turn-indicator " + (isMe?"turn-my":"turn-op"); ban.onclick = null; document.getElementById('guessBtn').disabled = !isMe; inputs.guess.disabled = !isMe; if(isMe) inputs.guess.focus(); }
+        function addGuessRow(id, g, b, c) { document.getElementById(id).insertAdjacentHTML('afterbegin', `<tr><td>${g}</td><td style="color:var(--success)">${b}</td><td style="color:#f59e0b">${c}</td></tr>`); }
+        function requestRematch() { 
+            document.getElementById('winOverlay').classList.add('hidden'); 
+            socket.emit('play_again', { roomId: myRoom, token: myToken });
+            const ban = document.getElementById('turnBanner'); ban.innerText = "Waiting for opponent..."; ban.className = "turn-indicator turn-waiting"; ban.onclick = null;
+        }
+        function doRejoin() { myRoom = localStorage.getItem('lastRoom'); socket.emit('rejoin_room', { roomId: myRoom, token: myToken }); }
+        socket.on('rematch_status_update', d => { if(d.whoRequested !== myName && d.requestCount === 1) { const ban = document.getElementById('turnBanner'); ban.innerText = `${d.whoRequested} wants a rematch!`; ban.className = "turn-indicator turn-rematch"; ban.onclick = requestRematch; } });
 
-        socket.on('display_typing', d => {
-             document.getElementById('typingIndicator').innerText = d.isTyping ? `${d.name} is typing...` : "";
+        // EVENTS
+        inputs.chat.addEventListener('keydown', (e) => { if(e.key === 'Enter') sendChat(); });
+        inputs.guess.addEventListener('keydown', (e) => { if(e.key === 'Enter') makeGuess(); });
+        
+        let typeTimer;
+        inputs.chat.addEventListener('input', () => { 
+            if(!myRoom) return; 
+            socket.emit('typing', { roomId: myRoom, token: myToken, isTyping: true }); 
+            clearTimeout(typeTimer);
+            typeTimer = setTimeout(() => socket.emit('typing', { roomId: myRoom, token: myToken, isTyping: false }), 1000); 
         });
-
+        
+        function makeGuess() { const v = inputs.guess.value; if(!/^\d{4}$/.test(v)) return; const prev = Array.from(document.querySelectorAll('#myHistory tr td:first-child')).map(t => t.innerText); if(prev.includes(v)) return alert("Duplicate!"); socket.emit('make_guess', { roomId: myRoom, token: myToken, guess: v }); inputs.guess.value = ""; }
+        function sendChat() { const m = inputs.chat.value.trim(); if(m) { socket.emit('send_chat', { roomId: myRoom, message: m, token: myToken }); inputs.chat.value = ""; } }
+        
+        socket.on('receive_chat', d => { const isMe = d.playerToken === myToken; document.getElementById('chatWindow').insertAdjacentHTML('beforeend', `<div class="msg ${isMe?'me':'them'}">${d.message}</div>`); document.getElementById('chatWindow').scrollTop = 9999; });
         socket.on('rejoined_game', d => {
             myRoom = d.roomId; myName = d.name; mySecret = d.secret;
-            if(d.state === 'lobby') {
-                switchView('lobby'); document.getElementById('lobbyRoomId').innerText = myRoom;
-            } else if (d.state === 'setup') {
-                switchView('setup');
-            } else {
-                switchView('game');
-                document.getElementById('gameRoomDisplay').innerText = myRoom;
-                document.getElementById('gameSecretDisplay').innerText = mySecret || "****";
-                document.getElementById('opNameDisplay').innerText = d.opponentName;
-                document.getElementById('myHistory').innerHTML = "";
-                document.getElementById('opHistory').innerHTML = "";
+            if(d.state === 'setup') switchView('setup');
+            else if (d.state === 'game') {
+                switchView('game'); document.getElementById('gameRoomDisplay').innerText = myRoom; document.getElementById('gameSecretDisplay').innerText = mySecret||"****"; document.getElementById('opNameDisplay').innerText = d.opponentName; document.getElementById('myHistory').innerHTML = ""; document.getElementById('opHistory').innerHTML = "";
+                d.guesses.forEach(g => addGuessRow(g.playerToken===myToken?'myHistory':'opHistory', g.guess, g.bulls, g.cows));
+                document.getElementById('chatWindow').innerHTML = ""; d.chatHistory.forEach(m => document.getElementById('chatWindow').insertAdjacentHTML('beforeend', `<div class="msg ${m.playerToken===myToken?'me':'them'}">${m.message}</div>`));
                 
-                d.guesses.forEach(g => {
-                    const isMe = g.playerToken === myToken;
-                    addGuessRow(isMe?'myHistory':'opHistory', g.guess, g.bulls, g.cows);
-                });
-                
-                // Restore Chat
-                const chatWin = document.getElementById('chatWindow');
-                chatWin.innerHTML = "";
-                d.chatHistory.forEach(m => {
-                    const isMe = m.playerToken === myToken;
-                    chatWin.insertAdjacentHTML('beforeend', `<div class="msg ${isMe?'me':'them'}"><b>${m.senderName}</b>${m.message}</div>`);
-                });
-                chatWin.scrollTop = chatWin.scrollHeight;
-
-                updateTurn(d.turnToken);
+                if(d.rematchPending) { const ban = document.getElementById('turnBanner'); ban.innerText = "Waiting for opponent..."; ban.className = "turn-indicator turn-waiting"; ban.onclick = null; }
+                else if(d.guesses.some(g=>g.bulls===4)) { const ban = document.getElementById('turnBanner'); ban.innerText = "🔄 Request Rematch"; ban.className = "turn-indicator turn-rematch"; ban.onclick = requestRematch; }
+                else updateTurn(d.turnToken);
                 document.getElementById('disconnectOverlay').classList.add('hidden');
             }
         });
 
-        function updateTurn(token) {
-            const isMe = token === myToken;
-            const ban = document.getElementById('turnBanner');
-            ban.innerText = isMe ? "Your Turn" : "Opponent's Turn";
-            ban.className = "turn-indicator " + (isMe?"turn-my":"turn-op");
-            document.getElementById('guessBtn').disabled = !isMe;
-            inputs.guess.disabled = !isMe;
-            if(isMe) inputs.guess.focus();
-        }
-
-        function addGuessRow(target, g, b, c) {
-            document.getElementById(target).insertAdjacentHTML('afterbegin', `<tr><td>${g}</td><td style="color:var(--success)">${b}</td><td style="color:#f59e0b">${c}</td></tr>`);
-        }
-
-        function requestRematch() { document.getElementById('winOverlay').classList.add('hidden'); socket.emit('play_again', { roomId: myRoom }); }
-        function exitRoom() { localStorage.clear(); socket.emit('leave_room', { roomId: myRoom, token: myToken }); location.reload(); }
-
-        // System
+        // SYSTEM
+        const tip = document.getElementById('floatingTooltip'); let tipT;
+        function showTip(e, t) { tip.innerHTML = t==='bulls'?"🎯 Bulls<br>Correct Digit, Correct Spot.":"🐮 Cows<br>Correct Digit, Wrong Spot."; const r = e.target.getBoundingClientRect(); tip.style.top = (r.top-50)+'px'; tip.style.left = (r.left-60)+'px'; tipT = setTimeout(()=>tip.style.opacity='1', 1000); }
+        function showTipImmediate(e, t) { clearTimeout(tipT); showTip(e, t); tip.style.opacity='1'; }
+        function hideTip() { clearTimeout(tipT); tip.style.opacity='0'; }
+        
+        socket.on('display_typing', d => document.getElementById('typingIndicator').innerText = d.isTyping ? `${d.name} is typing...` : "");
         socket.on('error_msg', m => { document.getElementById('errorDisplay').innerText = m; setTimeout(()=>document.getElementById('errorDisplay').innerText="",3000); });
         socket.on('opponent_disconnected', d => { document.getElementById('disconnectOverlay').classList.remove('hidden'); document.getElementById('disconnectMsg').innerText = `${d.name} disconnected.`; });
         socket.on('timer_tick', d => { document.getElementById('countdownText').innerText = d.timeLeft; });
         socket.on('reconnect_success', () => { document.getElementById('disconnectOverlay').classList.add('hidden'); });
-
     </script>
 </body>
 </html>
